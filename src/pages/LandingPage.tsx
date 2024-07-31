@@ -1,7 +1,8 @@
-import { Button, Image,Box, Text, Flex, HStack, Link, VStack, AspectRatio, Container, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
+import { Button, Image,Box, Text, Container, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import { Footer } from "../component/shared/Footer";
 import TopNavigationMenu from "../component/shared/TopNavigationMenu/TopNavigationMenu";
-
+import ladyAtWorkImage from "/1.jpg";
+import image5 from "/5.jpg";
 
 
 export default function landingPage() {
@@ -10,11 +11,13 @@ export default function landingPage() {
     <TopNavigationMenu />
     <Container py={{ base: '2', md: '6' }} maxW='9xl' px={8}>
       
-      <SimpleGrid columns={{ base: 1, md: 2 }} alignItems="center"  justifyItems={'center'}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} alignItems="center"  justifyItems={'center'} py={10}>
       <Box maxW="600px" height="500px" overflow="hidden" borderRadius={'lg'} >
+           
+            
             <Image
               objectFit="cover"
-              src="https://tinyurl.com/yeyjvptc"
+              src={ladyAtWorkImage}
               alt="Lady at work"
               width="100%"
               height="100%"
@@ -41,65 +44,90 @@ export default function landingPage() {
         </Stack>
       </SimpleGrid>
    
-      <Container bg="gray.50" py={10} mt={10} borderRadius="md">
+      <Box
+    maxW="8xl"
+    mx="auto"
+    my={20}
+    px={{ base: '4', md: '8', lg: '12' }}
+    py={{ base: '6', md: '8', lg: '12' }}
+    borderRadius={'2xl'}
+    bg={'background.50'}
+  >
         <Heading size="md" mb={6} textAlign="center" fontWeight="bold" mx={'auto'} >
         Discover how you see yourself, how others perceive you, and your
         ideal professional image through a workplace assessment.
         </Heading>
-        <SimpleGrid columns={{ base: 1, md: 3 }} gap={6} py={10}>
-          <Stack spacing={4} align="center" textAlign="center">
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={8} py={10}>
+          <Stack spacing={4} >
             <Image
-              src="https://via.placeholder.com/100"
+            borderRadius={'2xl'}
+              src={ladyAtWorkImage}
               alt="Public behaviour"
-              boxSize="100px"
+              h="72" objectFit="cover"
             />
+             <Stack px={6} pr={12}>
             <Heading size="sm" fontWeight="bold">Public behaviour</Heading>
-            <Text fontSize="sm" maxW="200px">
+            <Text fontSize="lg" textAlign={"justify"} >
               Describes how individuals behave, communicate, and engage with others in social interactions involving strangers or the general public.
             </Text>
+            </Stack>
           </Stack>
-          <Stack spacing={4} align="center" textAlign="center">
+          <Stack spacing={4} >
             <Image
-              src="https://via.placeholder.com/100"
+             borderRadius={'2xl'}
+              src={ladyAtWorkImage}
               alt="Private behaviour"
-              boxSize="100px"
+              h="72" objectFit="cover"
             />
-            <Heading size="sm">Private behaviour</Heading>
-            <Text fontSize="sm" maxW="200px">
+            <Stack px={6} pr={12}>
+            <Heading size="sm" fontWeight="bold" >Private behaviour</Heading>
+            <Text fontSize="md"  textAlign={"justify"}>
               How individuals act in intimate or personal settings, in the presence of people known to them, a more familiar group, or when alone.
             </Text>
+            </Stack>
+            
           </Stack>
-          <Stack spacing={4} align="center" textAlign="center">
+          <Stack spacing={4} >
             <Image
-              src="https://via.placeholder.com/100"
+             borderRadius={'2xl'}
+              src={ladyAtWorkImage}
               alt="Perceived behaviour"
-              boxSize="100px"
+             h="72" objectFit="cover"
             />
-            <Heading size="sm">Perceived behaviour</Heading>
-            <Text fontSize="sm" maxW="200px">
+            <Stack px={6} pr={12} >
+            <Heading size="sm" fontWeight="bold" >Perceived behaviour</Heading>
+            <Text fontSize="lg" textAlign={"justify"}>
               How an individual's behaviour is viewed by others, based on observations, interactions, and impressions.
             </Text>
+            </Stack>
           </Stack>
         </SimpleGrid>
-      </Container>
+      </Box>
      
-     <Box p={20}>
+     <Box maxW="8xl"
+    mx="auto"
+    my={10}
+    px={{ base: '4', md: '8', lg: '12' }}
+    py={{ base: '6', md: '8', lg: '12' }}
+    borderRadius={'2xl'}
+   >
      <SimpleGrid columns={{ base: 1, md: 2 }} alignItems="center"  justifyItems={'center'}>
      
      <Stack spacing={{ base: '8', md: '12' }} justifyContent="center">
-       <Stack spacing={{ base: '4', md: '6' }}>
-         <Heading size={{ base: 'md', md: 'lg' }} fontWeight="bold" >
+       <Stack spacing={'2'} px={20}>
+         <Heading size={'md'} fontWeight="bold" >
          Study reveals that a whopping
 85% of individuals lack a true
 understanding of themselves.
          </Heading>
-         <Text fontSize={{ base: 'lg', md: 'xl' }} color="gray.600">
+         <Text fontSize={'2xl'}  textAlign={"justify"} >
          Boost your self-awareness in just 30
-         minutes, and it's completely f
+minutes, and it's completely free!
          </Text>
+        
        </Stack>
      
-         <Button bg="brand.50" size="lg" color='white' width={'fit-content'}>
+       <Button bg="brand.50" size="lg" color='white' width={'fit-content'} mx={20}>
            Start Free Assessment
          </Button>
         
@@ -108,7 +136,7 @@ understanding of themselves.
      <Box maxW="600px" height="500px" overflow="hidden" borderRadius={'lg'} >
          <Image
            objectFit="cover"
-           src="https://tinyurl.com/yeyjvptc"
+           src={image5}
            alt="Lady at work"
            width="100%"
            height="100%"
