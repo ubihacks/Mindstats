@@ -48,9 +48,9 @@ export default function landingPage() {
     maxW="8xl"
     mx="auto"
     my={20}
-    px={{ base: '4', md: '8', lg: '12' }}
-    py={{ base: '6', md: '8', lg: '12' }}
-    borderRadius={'2xl'}
+    px={{ base: '4', md: '10', lg: '16' }}
+    py={{ base: '6', md: '10', lg: '16' }}
+    borderRadius={'70'}
     bg={'background.50'}
   >
         <Heading size="md" mb={6} textAlign="center" fontWeight="bold" mx={'auto'} >
@@ -60,7 +60,7 @@ export default function landingPage() {
         <SimpleGrid columns={{ base: 1, md: 3 }} gap={8} py={10}>
           <Stack spacing={4} >
             <Image
-            borderRadius={'2xl'}
+            borderRadius={'35'}
               src={ladyAtWorkImage}
               alt="Public behaviour"
               h="72" objectFit="cover"
@@ -74,7 +74,7 @@ export default function landingPage() {
           </Stack>
           <Stack spacing={4} >
             <Image
-             borderRadius={'2xl'}
+            borderRadius={'35'}
               src={ladyAtWorkImage}
               alt="Private behaviour"
               h="72" objectFit="cover"
@@ -89,7 +89,7 @@ export default function landingPage() {
           </Stack>
           <Stack spacing={4} >
             <Image
-             borderRadius={'2xl'}
+             borderRadius={'35'}
               src={ladyAtWorkImage}
               alt="Perceived behaviour"
              h="72" objectFit="cover"
@@ -109,7 +109,7 @@ export default function landingPage() {
     my={10}
     px={{ base: '4', md: '8', lg: '12' }}
     py={{ base: '6', md: '8', lg: '12' }}
-    borderRadius={'2xl'}
+    
    >
      <SimpleGrid columns={{ base: 1, md: 2 }} alignItems="center"  justifyItems={'center'}>
      
@@ -133,8 +133,9 @@ minutes, and it's completely free!
         
      
      </Stack>
-     <Box maxW="600px" height="500px" overflow="hidden" borderRadius={'lg'} >
+     <Box maxW="900px" height="550px" overflow="hidden" borderRadius={'lg'} >
          <Image
+          borderRadius={'35'}
            objectFit="cover"
            src={image5}
            alt="Lady at work"
