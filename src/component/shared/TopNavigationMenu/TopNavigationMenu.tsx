@@ -9,19 +9,19 @@ export default function TopNavigationMenu() {
   const menuItems: string[] = ['Home', 'About', 'Assessment', 'Pricing', 'Contact'];
 
   return (
-    <Box as="nav" bg="brand.50" boxShadow="md" position="sticky" top="0" zIndex="sticky">
+    <Box as="nav" bg="brand.50" boxShadow="md" position="sticky" top="0" zIndex="sticky" py={2}>
       <Box position="relative" zIndex="tooltip">
-        <Container py="4" maxW={'8xl'}>
+        <Container py="4" maxW={'9xl'}>
           <HStack justify="space-between">
             <Image src={Logo} alt="Logo" h="16" /> {/* Add the SVG logo */}
             {isDesktop ? (
               <>
-                <ButtonGroup size="lg" variant="link" spacing="8">
+                <ButtonGroup size="lg" variant="link" spacing="14">
                   {menuItems.map((item) => (
-                    <Button key={item} fontSize="lg" fontWeight="semibold" color="white">{item}</Button>
+                    <Button key={item} fontSize="xl" fontWeight="md" color="white">{item}</Button>
                   ))}
                 </ButtonGroup>
-                <Button  size="lg" variant="outline-thin">Sign Up</Button>
+                <Button  size="md" variant="outline-thin" borderRadius='12' px={8} >Sign Up</Button>
               </>
             ) : (
               <>
