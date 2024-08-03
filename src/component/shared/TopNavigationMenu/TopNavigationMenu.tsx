@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Container, HStack, useBreakpointValue, useDisclosure, Text, Image } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Container, HStack, useBreakpointValue, useDisclosure, Image } from "@chakra-ui/react";
 import { ToggleButton } from "./ToggleButton";
 import { MobileDrawer } from "./MobileDrawer ";
 import Logo from "/mindstats.svg"; 

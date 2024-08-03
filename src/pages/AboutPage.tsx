@@ -1,4 +1,4 @@
-import { Box, Button, Container, Heading, HStack, VStack ,Image ,Text, SimpleGrid, Stack } from "@chakra-ui/react"
+import { Box, Button, Heading, VStack ,Image ,Text, SimpleGrid, Stack } from "@chakra-ui/react"
 import { Footer } from "../component/shared/Footer"
 import TopNavigationMenu from "../component/shared/TopNavigationMenu/TopNavigationMenu"
 import image from "/6.jpg";
