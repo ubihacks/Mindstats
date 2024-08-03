@@ -4,11 +4,12 @@ import {
   ButtonGroup,
   Container,
   Divider,
-  IconButton,
+  Image,
   SimpleGrid,
   Stack,
   Text,
 } from "@chakra-ui/react";
+import Logo from "/mindstats.svg"; 
 
 const links = [
   {
@@ -34,18 +35,15 @@ const links = [
 
 export const Footer = () => (
   <Box bg="#0b3e80" color="white">
-    <Container as="footer" role="contentinfo" maxW="8xl">
+    <Container as="footer" role="contentinfo" maxW="9xl" px={16}>
       <Stack
         justify="space-between"
-       
         direction={{ base: "column", lg: "row" }}
         py={{ base: "12", md: "16" }}
         spacing="10"
       >
         <Stack spacing={{ base: "6", md: "8" }} align="start">
-          <Text fontSize="2xl" fontWeight="bold">
-            Assessments.
-          </Text>
+        <Image src={Logo} alt="Logo" h="16" />
           <Text fontSize={{ base: "md", md: "lg" }} width={{ base: "full", md: "md" }}>
             Mindstats is an online assessment tool designed to assist
             individuals in enhancing their self-awareness and understanding of
@@ -59,7 +57,7 @@ export const Footer = () => (
         >
           {links.map((group, idx) => (
             <Stack key={idx} spacing="4" minW={{ lg: "40" }}>
-              <Text fontSize="lg" fontWeight="semibold" color="white">
+              <Text fontSize="2xl" fontWeight="semibold" color="white">
                 {group.title}
               </Text>
               <Stack spacing="3" shouldWrapChildren>
@@ -67,6 +65,7 @@ export const Footer = () => (
                   <Button
                     key={idx}
                     as="a"
+                    size={'lg'}
                     variant="link"
                     href={link.href}
                     color="whiteAlpha.800"

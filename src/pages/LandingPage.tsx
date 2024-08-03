@@ -9,13 +9,13 @@ export default function landingPage() {
   return (
     <>
     <TopNavigationMenu />
-    <Container py={{ base: '2', md: '6' }} maxW='9xl' px={8}>
-      
-      <SimpleGrid columns={{ base: 1, md: 2 }} alignItems="center"  justifyItems={'center'} py={10}>
-      <Box maxW="600px" height="500px" overflow="hidden" borderRadius={'lg'} >
-           
-            
+    <Container py={{ base: '2', md: '6' }} maxW='9xl' px={5}>
+
+
+<Stack direction={'row'} spacing={20} justifyContent="center" alignItems="center" py={10} >
+<Box maxW="750px" height="550px" overflow="hidden" borderRadius={35}>
             <Image
+            
               objectFit="cover"
               src={ladyAtWorkImage}
               alt="Lady at work"
@@ -23,27 +23,26 @@ export default function landingPage() {
               height="100%"
             />
           </Box>
-        <Stack spacing={{ base: '8', md: '12' }} justifyContent="center">
-          <Stack spacing={{ base: '4', md: '6' }}>
-            <Text fontSize={{ base: 'lg', md: 'xl' }} fontWeight="medium" >
-              DISC Workplace Behaviour Assessment
-            </Text>
-            <Heading size={{ base: '2xl', md: '4xl' }} fontWeight="bold" >
-              A better self-awareness can create a happier workplace.
-            </Heading>
-            <Text fontSize={{ base: 'lg', md: 'xl' }} color="gray.600">
-              There are reasons why some are so aggressive at work, some are chill, some are slow and some think too much at work. What are you? Find out more with our workplace-focused behavioural assessment for free.
-            </Text>
-          </Stack>
-        
-            <Button bg="brand.50" size="lg" color='white' width={'fit-content'}>
-              Start Free Assessment
-            </Button>
-           
-        
-        </Stack>
-      </SimpleGrid>
-   
+          <Stack  maxW="650px" spacing={3} justifyContent="center">
+         
+         <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="medium" >
+           DISC Workplace Behavior Assessment
+         </Text>
+         <Heading size={{ base: 'lg', md: 'xl' }} fontWeight="bold" >
+           A better self-awareness can create a happier workplace.
+         </Heading>
+         <Text fontSize={{ base: 'lg', md: 'xl' }} textAlign={'justify'}>
+           There are reasons why some are so aggressive at work, some are chill, some are slow and some think too much at work. What are you? Find out more with our workplace-focused behavioural assessment for free.
+         </Text>
+         <Button bg="brand.50" size="lg" color='white' width={'fit-content'} my={2} >
+         Take a Free Assessment Now
+         </Button>
+      
+     
+     </Stack>
+
+  </Stack>
+    
       <Box
     maxW="8xl"
     mx="auto"
