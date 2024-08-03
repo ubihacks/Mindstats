@@ -1,7 +1,7 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 import AssessmentPage from "../pages/AssessmentPage";
-import About from "../pages/About";
+import About from "../pages/AboutPage";
 
 
 
