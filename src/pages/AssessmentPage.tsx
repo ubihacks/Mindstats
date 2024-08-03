@@ -18,7 +18,7 @@ export default function AssessmentPage() {
       <TopNavigationMenu />
       <Container maxW="container.md" py={10}>
         <VStack spacing={5} align="center">
-          <Heading as="h1" size="lg" fontWeight="bold" textAlign="center">
+          <Heading as="h1" size="xl" fontWeight="bold" textAlign="center">
             A Tailored Workplace Behavioural Assessment.
           </Heading>
           <Text textAlign="center">

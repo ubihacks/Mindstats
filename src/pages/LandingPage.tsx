@@ -1,7 +1,8 @@
 import { Button, Image,Box, Text, Container, Heading, SimpleGrid, Stack } from "@chakra-ui/react";
 import { Footer } from "../component/shared/Footer";
 import TopNavigationMenu from "../component/shared/TopNavigationMenu/TopNavigationMenu";
-import ladyAtWorkImage from "/1.jpg";
+import mainImage from "/12.jpg";
+import ladyAtWorkImage from "/5.jpg";
 import image5 from "/5.jpg";
 
 
@@ -17,7 +18,7 @@ export default function landingPage() {
             <Image
             
               objectFit="cover"
-              src={ladyAtWorkImage}
+              src={mainImage}
               alt="Lady at work"
               width="100%"
               height="100%"
