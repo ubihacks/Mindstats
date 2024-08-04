@@ -74,7 +74,7 @@ export default function AssessmentPage() {
             .
           </Checkbox>
 
-          <Button colorScheme="blue" size="lg" mt={4}>
+          <Button size="lg" mt={4} variant={'primary'}>
             Begin Now
           </Button>
         </VStack>

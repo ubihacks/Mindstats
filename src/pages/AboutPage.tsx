@@ -21,7 +21,7 @@ function AboutPage() {
       <VStack spacing={10} align="center">
         <Image src={image} alt="Header Image" objectFit={"cover"} />
 
-        <VStack spacing={4} textAlign="center" px={40}>
+        <VStack spacing={5} textAlign="center" px={40}>
           <Heading as="h1" size="2xl" fontWeight="bold">
             Personality ≠ Behaviour.
           </Heading>
@@ -36,7 +36,7 @@ function AboutPage() {
             detailed, job-related insights, making them more predictive of
             actual job performance.
           </Text>
-          <Button size="lg">Start Assessment Now</Button>
+          <Button variant={'primary'} size="lg" mt={5}>Start Assessment Now</Button>
           <Text fontSize="sm">No registration required.</Text>
         </VStack>
         <Box

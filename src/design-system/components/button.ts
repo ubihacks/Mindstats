@@ -11,8 +11,9 @@ const baseStyle = {
 
 const variants = {
 	primary: () => ({
-		bg: 'bg-accent',
-		color: 'accent',
+		bg: 'brand.50',
+		color: 'white',
+		borderRadius: 'full',
 	}),
 
 	'menu-gradient': () => ({
@@ -107,6 +108,7 @@ const variants = {
 	'outline-thin': () => ({
 		borderWidth: 1,
 		borderColor: 'white',
+		borderRadius: 'full',
 		color: 'white',
 		_hover: {
 			borderColor: 'white.500'
