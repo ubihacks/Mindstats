@@ -11,8 +11,11 @@ import {
 import { Footer } from "../component/shared/Footer";
 import TopNavigationMenu from "../component/shared/TopNavigationMenu/TopNavigationMenu";
 import mainImage from "/12.jpg";
-import ladyAtWorkImage from "/5.jpg";
-import image5 from "/5.jpg";
+import ladyAtWorkImage from "/self-awareness-ai.jpg";
+import SelfAwarenessAI from "/self-awareness-ai.jpg";
+import PublicBehaviour from "/public-behaviour.jpg";
+import PrivateBehaviour from "/private-behaviour.jpg";
+import PerceivedBehaviour from "/perceived-behaviour.jpg";
 
 export default function landingPage() {
   return (
@@ -39,7 +42,7 @@ export default function landingPage() {
             <Text fontSize={{ base: "md", md: "lg" }} fontWeight="medium">
               DISC Workplace Behavior Assessment
             </Text>
-            <Heading size={{ base: "lg", md: "xl" }} fontWeight="bold">
+            <Heading size={{ base: "lg", md: "lg" }} fontWeight="extrabold">
               A better self-awareness can create a happier workplace.
             </Heading>
             <Text fontSize={{ base: "lg", md: "xl" }} textAlign={"justify"}>
@@ -77,7 +80,7 @@ export default function landingPage() {
             <Stack spacing={4}>
               <Image
                 borderRadius={"35"}
-                src={ladyAtWorkImage}
+                src={PublicBehaviour}
                 alt="Public behaviour"
                 h="72"
                 objectFit="cover"
@@ -96,7 +99,7 @@ export default function landingPage() {
             <Stack spacing={4}>
               <Image
                 borderRadius={"35"}
-                src={ladyAtWorkImage}
+                src={PrivateBehaviour}
                 alt="Private behaviour"
                 h="72"
                 objectFit="cover"
@@ -115,7 +118,7 @@ export default function landingPage() {
             <Stack spacing={4}>
               <Image
                 borderRadius={"35"}
-                src={ladyAtWorkImage}
+                src={PerceivedBehaviour}
                 alt="Perceived behaviour"
                 h="72"
                 objectFit="cover"
@@ -175,7 +178,7 @@ export default function landingPage() {
               <Image
                 borderRadius={"35"}
                 objectFit="cover"
-                src={image5}
+                src={SelfAwarenessAI}
                 alt="Lady at work"
                 width="100%"
                 height="100%"

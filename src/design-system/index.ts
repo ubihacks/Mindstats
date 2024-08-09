@@ -8,7 +8,7 @@ const config: ThemeConfig = {
 	cssVarPrefix: 'ck',
 };
 
-const assessmentTheme: Record<string, any> = extendTheme({
+const assessmentTheme = extendTheme({
 	config: {
 		...config,
 	},

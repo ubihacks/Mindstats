@@ -1,6 +1,6 @@
-import '@fontsource/outfit';
+import '@fontsource/open-sans';
 
 export default {
-	heading: 'Outfit',
-	body: 'Outfit,  sans-serif',
+	heading: 'Open Sans, sans-serif',
+	body: 'Open Sans,  sans-serif',
 };
