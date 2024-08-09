@@ -11,7 +11,6 @@ import {
 import { Footer } from "../component/shared/Footer";
 import TopNavigationMenu from "../component/shared/TopNavigationMenu/TopNavigationMenu";
 import mainImage from "/12.jpg";
-import ladyAtWorkImage from "/self-awareness-ai.jpg";
 import SelfAwarenessAI from "/self-awareness-ai.jpg";
 import PublicBehaviour from "/public-behaviour.jpg";
 import PrivateBehaviour from "/private-behaviour.jpg";
