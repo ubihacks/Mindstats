@@ -1,0 +1,130 @@
+// prisma/schema.prisma
+// Run: npx prisma db push  (against Supabase PostgreSQL)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Companies ───────────────────────────────────────────────────────────────
+
+model Company {
+  id               String        @id @default(uuid())
+  name             String
+  website          String
+  domain           String        @unique
+  current_plan     String?       // PlanType enum string
+  payment_cycle    String        @default("MONTHLY")
+  credits          Int           @default(0)
+  used_credits     Int           @default(0)
+  created_at       DateTime      @default(now())
+
+  profiles         Profile[]
+  hiring_roles     HiringRole[]
+  reports          Report[]
+
+  @@map("companies")
+}
+
+// ─── Profiles ────────────────────────────────────────────────────────────────
+
+model Profile {
+  id               String        @id // matches Supabase auth.users.id
+  email            String        @unique
+  company_name     String
+  company_website  String
+  company_domain   String
+  role             String        @default("HR") // ADMIN | HR | HIRING_MANAGER
+  is_first_domain_user Boolean   @default(false)
+  created_at       DateTime      @default(now())
+
+  company          Company?      @relation(fields: [company_domain], references: [domain])
+
+  @@map("profiles")
+}
+
+// ─── Hiring Roles ─────────────────────────────────────────────────────────────
+
+model HiringRole {
+  id                     String       @id @default(uuid())
+  title                  String
+  job_level              String
+  function               String
+  unique_code            String       @unique
+  company_id             String
+  hiring_manager_id      String?
+  hiring_manager_email   String?
+  hiring_manager_name    String?
+  hiring_manager_status  String       @default("IDLE") // IDLE | IN_PROGRESS | COMPLETED
+  behavioural_demand     Json?        // stored DISC answers JSON
+  created_at             DateTime     @default(now())
+
+  company                Company      @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  candidates             Candidate[]
+  assessment_responses   AssessmentResponse[]
+  reports                Report[]
+
+  @@map("hiring_roles")
+}
+
+// ─── Candidates ───────────────────────────────────────────────────────────────
+
+model Candidate {
+  id                           String       @id @default(uuid())
+  role_id                      String
+  name                         String
+  email                        String
+  invite_token                 String       @unique
+  invite_status                String       @default("PENDING") // PENDING | COMPLETED | EXPIRED
+  invited_at                   DateTime     @default(now())
+  expires_at                   DateTime
+  share_report_with_candidate  Boolean      @default(true)
+  report_url                   String?
+  credit_refunded              Boolean      @default(false)
+
+  hiring_role                  HiringRole   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  assessment_responses         AssessmentResponse[]
+  reports                      Report[]
+
+  @@map("candidates")
+}
+
+// ─── Assessment Responses ─────────────────────────────────────────────────────
+
+model AssessmentResponse {
+  id               String       @id @default(uuid())
+  role_id          String
+  respondent_id    String       // Profile.id
+  assessment_type  String       // HIRING_MANAGER | CANDIDATE
+  answers          Json         // array of QuestionAnswer
+  submitted_at     DateTime     @default(now())
+
+  hiring_role      HiringRole   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  candidate        Candidate?   @relation(fields: [respondent_id], references: [id])
+
+  @@map("assessment_responses")
+}
+
+// ─── Reports ──────────────────────────────────────────────────────────────────
+
+model Report {
+  id             String       @id @default(uuid())
+  role_id        String
+  candidate_id   String?
+  company_id     String
+  file_url       String
+  file_type      String       // PDF | EXCEL
+  uploaded_by    String       // email
+  uploaded_at    DateTime     @default(now())
+
+  hiring_role    HiringRole   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  candidate      Candidate?   @relation(fields: [candidate_id], references: [id])
+  company        Company      @relation(fields: [company_id], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
