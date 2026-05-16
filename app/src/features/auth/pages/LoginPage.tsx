@@ -102,58 +102,7 @@ const LoginPage: React.FC = () => {
           </VStack>
         </HStack>
 
-        {/* Headline */}
-        <VStack align="start" spacing={6} zIndex={1}>
-          <VStack align="start" spacing={3}>
-            <Heading
-              size="xl"
-              color="white"
-              lineHeight="1.15"
-              letterSpacing="-0.04em"
-              fontWeight="800"
-            >
-              Hire beyond the resume.
-              <Box as="span" color="teal.300"> Understand behaviour.</Box>
-            </Heading>
-            <Text color="whiteAlpha.600" fontSize="md" lineHeight="1.7" maxW="380px">
-              The B2B platform that matches candidates to hiring managers using
-              DISC behavioural intelligence — so you make decisions with confidence.
-            </Text>
-          </VStack>
 
-          <List spacing={3}>
-            {FEATURES.map((f) => (
-              <ListItem key={f} display="flex" alignItems="flex-start" gap={3}>
-                <ListIcon as={CheckCircleIcon} color="teal.300" mt={0.5} boxSize={4} />
-                <Text color="whiteAlpha.700" fontSize="sm" lineHeight="1.6">{f}</Text>
-              </ListItem>
-            ))}
-          </List>
-        </VStack>
-
-        {/* Testimonial */}
-        <Box
-          bg="whiteAlpha.50"
-          borderRadius="2xl"
-          p={6}
-          border="1px solid"
-          borderColor="whiteAlpha.100"
-          zIndex={1}
-        >
-          <Text color="whiteAlpha.800" fontSize="sm" lineHeight="1.7" fontStyle="italic" mb={4}>
-            "Mindstat gave us behavioural clarity we never had before. Our mis-hire rate dropped
-            significantly in the first quarter of using it."
-          </Text>
-          <HStack spacing={3}>
-            <Box w={8} h={8} bg="brand.700" borderRadius="full" display="flex" alignItems="center" justifyContent="center">
-              <Text fontSize="xs" fontWeight="700" color="white">SR</Text>
-            </Box>
-            <VStack align="start" spacing={0}>
-              <Text fontSize="xs" fontWeight="700" color="white">Sarah R.</Text>
-              <Text fontSize="xs" color="whiteAlpha.500">Head of Talent Acquisition</Text>
-            </VStack>
-          </HStack>
-        </Box>
       </Box>
 
       {/* ── Right: Login Form ── */}
