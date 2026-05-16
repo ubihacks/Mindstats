@@ -1,47 +1,29 @@
 ﻿/**
- * LandingPage — UI/UX Pro Max Skill Applied
+ * LandingPage — MindStats Design Guide (Light Professional)
  * ─────────────────────────────────────────────────────────────────────────────
- * Style ref : PocketOS.ai · Krisp.ai · Stripe · Vercel dark premium
- * Aesthetic : Deep dark layers · Razor-sharp 1px borders · Glassmorphism
- * Layout    : Hero-Centric + Bento Grid (behaviour cards)
- * Motion    : Framer Motion — duration: 0.2, cubic-bezier ease-out
- * Rules     : border="1px solid" borderColor="whiteAlpha.100"
- *             backdropFilter="blur(16px)" · borderRadius ≤ xl · no heavy shadows
+ * Primary:  #003366 (navy) · Canvas: white · Feature: #E8F3ED (mint)
+ * Buttons:  borderRadius="full" pill · Borders: #DADADA
+ * Images:   borderRadius="24px" for hero / large assets
+ * Typography: Montserrat headings · Inter body
  */
 
 import React, { useEffect } from 'react';
 import {
-  Box, Button, Container, Divider, Flex, Grid,
-  Heading, HStack, Icon, Image,
-  Text, VStack,
+  Box, Button, Container, Flex, Grid,
+  Heading, HStack, Icon, Image, Text, VStack,
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
-import {
-  MdPsychology, MdVerified, MdGroups,
-} from 'react-icons/md';
+import { MdPsychology, MdVerified, MdGroups } from 'react-icons/md';
 import { useAppSelector } from '../app/hooks';
 
-// ── Motion primitives ─────────────────────────────────────────────────────────
 const MotionBox = motion(Box);
+const EASE_OUT  = [0.0, 0.0, 0.2, 1] as [number, number, number, number];
+const mkT = (delay = 0) => ({ duration: 0.3, ease: EASE_OUT, delay });
 
-// ── Skill §1-C: duration 0.2s ease-out — cubic-bezier array (TS-safe) ────────
-const EASE_OUT = [0.0, 0.0, 0.2, 1] as [number, number, number, number];
-const mkT = (delay = 0) => ({ duration: 0.2, ease: EASE_OUT, delay });
-
-// ── Skill §1-A: Glassmorphic card token ──────────────────────────────────────
-// "Razor-sharp 1px borders with low-opacity white to create depth"
-const GLASS = {
-  bg:                   'rgba(10, 10, 10, 0.70)',
-  backdropFilter:       'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
-  border:               '1px solid',
-  borderColor:          'whiteAlpha.100',
-  borderRadius:         'xl',          // rule: never exceed xl
-} as const;
-
-// ── Data ──────────────────────────────────────────────────────────────────────
+const NAVY = '#003366';
+const MINT = '#E8F3ED';
 
 const BEHAVIOUR_CARDS = [
   {
@@ -64,8 +46,6 @@ const BEHAVIOUR_CARDS = [
   },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
-
 const LandingPage: React.FC = () => {
   const navigate       = useNavigate();
   const prefersReduced = useReducedMotion();
@@ -76,51 +56,31 @@ const LandingPage: React.FC = () => {
   }, [initialized, user, navigate]);
 
   return (
-    /* Skill §1-A: primary bg = #0A0A0A — deepest dark layer */
-    <Box bg="#0A0A0A" minH="100vh">
+    <Box bg="white" minH="100vh">
 
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO — dark bg · glassmorphic badge · gradient headline
-          Skill: deep dark + 1px border depth + Vercel-style white CTA
+          HERO — white canvas · navy headline · pill CTAs
       ═══════════════════════════════════════════════════════════════════ */}
-      <Box
-        position="relative" overflow="hidden"
-        bg="#080808"
-        borderBottom="1px solid" borderColor="whiteAlpha.60"
-      >
-        {/* Ambient radial glow (NOT a drop shadow) */}
-        <Box
-          position="absolute" top="-200px" right="-150px"
-          w="600px" h="600px" borderRadius="full"
-          bg="brand.600" opacity={0.06} filter="blur(120px)"
-          pointerEvents="none"
-        />
-        <Box
-          position="absolute" bottom="-80px" left="-80px"
-          w="380px" h="380px" borderRadius="full"
-          bg="teal.500" opacity={0.05} filter="blur(100px)"
-          pointerEvents="none"
-        />
-
+      <Box bg="white" borderBottom="1px solid #DADADA">
         <Container maxW="1280px" px={{ base: 5, md: 10 }} py={{ base: 20, md: 28 }}>
-          <Flex direction={{ base: 'column', lg: 'row' }} align="center" gap={{ base: 14, lg: 20 }}>
+          <Flex direction={{ base: 'column', lg: 'row' }} align="center" gap={{ base: 12, lg: 20 }}>
 
-            {/* ── Copy ─────────────────────────────────────────── */}
+            {/* ── Copy ── */}
             <MotionBox
               flex={1}
-              initial={prefersReduced ? false : { opacity: 0, y: 16 }}
+              initial={prefersReduced ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={mkT(0)}
             >
-              {/* Glassmorphic pill badge */}
+              {/* Mint pill badge */}
               <Box
                 display="inline-flex" alignItems="center" gap={2}
-                {...GLASS} px={4} py={1.5} mb={7} borderRadius="full"
+                bg={MINT} px={4} py={1.5} mb={6} borderRadius="full"
               >
-                <Box w={1.5} h={1.5} borderRadius="full" bg="teal.400" flexShrink={0} />
+                <Box w={1.5} h={1.5} borderRadius="full" bg={NAVY} flexShrink={0} />
                 <Text
                   fontSize="11px" fontWeight="700" letterSpacing="0.10em"
-                  color="whiteAlpha.800" textTransform="uppercase" fontFamily="heading"
+                  color={NAVY} textTransform="uppercase" fontFamily="heading"
                 >
                   DISC Workplace Behavioural Assessment
                 </Text>
@@ -129,52 +89,50 @@ const LandingPage: React.FC = () => {
               <Heading
                 as="h1" fontFamily="heading"
                 fontSize={{ base: '3xl', md: '42px', lg: '52px' }}
-                fontWeight="800" color="white"
+                fontWeight="800" color={NAVY}
                 lineHeight="1.06" letterSpacing="-0.035em" mb={4}
               >
-               DISC Workplace Behavior Assessment
+                DISC Workplace Behavior Assessment
               </Heading>
 
               <Text
-                color="gray.200" fontSize={{ base: 'lg', md: 'xl' }}
-                fontWeight="600" fontFamily="heading" lineHeight="1.4" mb={5}
+                color={NAVY} fontSize={{ base: 'lg', md: 'xl' }}
+                fontWeight="600" fontFamily="heading" lineHeight="1.4" mb={4}
               >
                 A better self-awareness can create a happier workplace.
               </Text>
 
-              {/* Skill §1-A: muted secondary = gray.400 */}
-              <Text color="gray.400" fontSize={{ base: 'md', md: 'lg' }} lineHeight="1.8" maxW="460px" mb={10}>
+              <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }} lineHeight="1.8" maxW="460px" mb={8}>
                 There are reasons why some are so aggressive at work, some are chill,
                 some are slow, and some overthink everything. What are you? Find out
                 with our workplace-focused DISC behavioural assessment.
               </Text>
 
-              {/* Vercel-style CTAs: white primary / glass ghost */}
+              {/* Pill CTAs — Desing.md: borderRadius="full" */}
               <HStack spacing={3} flexWrap="wrap">
                 <Button
                   as={RouterLink} to="/register" size="lg"
-                  bg="white" color="gray.900" fontWeight="700" fontFamily="heading"
-                  borderRadius="xl" rightIcon={<ArrowForwardIcon />}
-                  _hover={{ bg: 'gray.100', transform: 'translateY(-1px)' }}
-                  _active={{ bg: 'gray.200', transform: 'translateY(0)' }}
-                  transition="all 0.2s ease-out" h="48px" px={7}
+                  bg={NAVY} color="white" fontWeight="700" fontFamily="heading"
+                  borderRadius="full" rightIcon={<ArrowForwardIcon />}
+                  _hover={{ bg: '#002952', transform: 'translateY(-1px)' }}
+                  _active={{ bg: '#002952', transform: 'translateY(0)' }}
+                  transition="all 0.2s ease-out"
                 >
                   Take a Free Assessment Now
                 </Button>
                 <Button
                   as={RouterLink} to="/pricing" size="lg" variant="outline"
-                  color="whiteAlpha.700" borderColor="whiteAlpha.200"
-                  borderRadius="xl" fontWeight="600" fontFamily="heading"
-                  _hover={{ bg: 'whiteAlpha.50', borderColor: 'whiteAlpha.400', color: 'white' }}
-                  _active={{ bg: 'whiteAlpha.100' }}
-                  transition="all 0.2s ease-out" h="48px" px={7}
+                  color={NAVY} borderColor={NAVY}
+                  borderRadius="full" fontWeight="600" fontFamily="heading"
+                  _hover={{ bg: MINT }}
+                  transition="all 0.2s ease-out"
                 >
                   See Pricing
                 </Button>
               </HStack>
             </MotionBox>
 
-            {/* ── Hero image — glassmorphic 1px frame ─────────── */}
+            {/* ── Hero image — borderRadius="24px" per Desing.md ── */}
             <MotionBox
               flex={1}
               initial={prefersReduced ? false : { opacity: 0, scale: 0.97 }}
@@ -182,16 +140,21 @@ const LandingPage: React.FC = () => {
               transition={mkT(0.08)}
               display={{ base: 'none', lg: 'block' }}
             >
-              <Box position="relative" borderRadius="xl" overflow="hidden" border="1px solid" borderColor="whiteAlpha.100">
-                <Image src="/12.jpg" alt="Professional at work" w="full" h="460px" objectFit="cover" filter="brightness(0.85)" />
-                <Box position="absolute" bottom={4} left={4} right={4} {...GLASS} px={4} py={3}>
+              <Box position="relative" borderRadius="24px" overflow="hidden" boxShadow="0 4px 32px rgba(0,51,102,0.12)">
+                <Image src="/12.jpg" alt="Professional at work" w="full" h="460px" objectFit="cover" />
+                {/* Navy glass chip overlay */}
+                <Box
+                  position="absolute" bottom={5} left={5} right={5}
+                  bg="rgba(0,51,102,0.88)" backdropFilter="blur(8px)"
+                  px={4} py={3} borderRadius="xl"
+                >
                   <HStack spacing={3}>
-                    <Box bg="brand.600" borderRadius="lg" p={2} flexShrink={0} display="flex" alignItems="center" justifyContent="center">
-                      <Icon as={MdPsychology} boxSize={5} color="white" />
+                    <Box bg="white" borderRadius="lg" p={2} flexShrink={0} display="flex" alignItems="center" justifyContent="center">
+                      <Icon as={MdPsychology} boxSize={5} color={NAVY} />
                     </Box>
                     <VStack align="start" spacing={0}>
                       <Text fontSize="xs" fontWeight="700" color="white" fontFamily="heading">Behavioural Match Engine</Text>
-                      <Text fontSize="10px" color="gray.400">DISC · Hiring Manager Profile</Text>
+                      <Text fontSize="10px" color="whiteAlpha.700">DISC · Hiring Manager Profile</Text>
                     </VStack>
                   </HStack>
                 </Box>
@@ -203,27 +166,37 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          BEHAVIOUR — Bento Grid (Skill §1-B)
-          spacing={6} · glass cards · border-color illumination on hover
+          BEHAVIOUR — Mint feature block (Desing.md: #E8F3ED)
+          Cards: white · 1px #DADADA border · borderRadius="8px"
       ═══════════════════════════════════════════════════════════════════ */}
-      <Box bg="#080808" py={{ base: 20, md: 28 }}>
+      <Box bg={MINT} py={{ base: 16, md: 24 }}>
         <Container maxW="1280px" px={{ base: 5, md: 10 }}>
-          <VStack spacing={3} mb={14} textAlign="center">
-            <Box display="inline-flex" alignItems="center" gap={2} {...GLASS} px={4} py={1.5} borderRadius="full">
-              <Icon as={MdVerified} boxSize={3} color="teal.400" />
-              <Text fontSize="11px" fontWeight="700" letterSpacing="0.10em" color="whiteAlpha.800" textTransform="uppercase" fontFamily="heading">
+          <VStack spacing={3} mb={12} textAlign="center">
+            <Box
+              display="inline-flex" alignItems="center" gap={2}
+              bg="white" border="1px solid #DADADA"
+              px={4} py={1.5} borderRadius="full"
+            >
+              <Icon as={MdVerified} boxSize={3} color={NAVY} />
+              <Text
+                fontSize="11px" fontWeight="700" letterSpacing="0.10em"
+                color={NAVY} textTransform="uppercase" fontFamily="heading"
+              >
                 The DISC Framework
               </Text>
             </Box>
-            <Heading fontFamily="heading" fontSize={{ base: '2xl', md: '32px' }} fontWeight="800" color="white" letterSpacing="-0.03em" lineHeight="1.15" maxW="560px">
+            <Heading
+              fontFamily="heading" fontSize={{ base: '2xl', md: '32px' }}
+              fontWeight="800" color={NAVY} letterSpacing="-0.03em" lineHeight="1.15" maxW="560px"
+            >
               Discover how you see yourself, how others perceive you, and your ideal professional image.
             </Heading>
-            <Text color="gray.400" fontSize="md" maxW="480px" lineHeight="1.75">
+            <Text color="gray.600" fontSize="md" maxW="480px" lineHeight="1.75">
               A workplace assessment that surfaces three distinct behavioural dimensions.
             </Text>
           </VStack>
 
-          {/* Bento Grid — §1-B: gap={6}, hover border illumination */}
+          {/* Card grid — Desing.md: 1px #DADADA border, borderRadius="8px" */}
           <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={6}>
             {BEHAVIOUR_CARDS.map((card, i) => (
               <MotionBox
@@ -231,27 +204,30 @@ const LandingPage: React.FC = () => {
                 initial={prefersReduced ? false : { opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={mkT(i * 0.06)}
+                transition={mkT(i * 0.08)}
               >
                 <Box
-                  {...GLASS} overflow="hidden" h="full" cursor="default" role="group"
-                  _hover={{ borderColor: 'whiteAlpha.200', bg: 'rgba(20,20,20,0.80)', transform: 'translateY(-3px)' }}
+                  bg="white" border="1px solid #DADADA" borderRadius="lg"
+                  overflow="hidden" h="full"
+                  _hover={{ transform: 'translateY(-4px)', boxShadow: 'md' }}
                   transition="all 0.2s ease-out"
                 >
-                  <Box overflow="hidden" h="188px" borderRadius="lg" m={3}>
+                  <Box h="188px" overflow="hidden">
+                    {/* Desing.md: illustrative images use borderRadius="24px" */}
                     <Image
-                      src={card.src} alt={card.title} w="full" h="full" objectFit="cover"
-                      filter="brightness(0.80)"
-                      transition="transform 0.3s ease-out"
-                      _groupHover={{ transform: 'scale(1.03)', filter: 'brightness(0.90)' }}
+                      src={card.src} alt={card.title}
+                      w="full" h="full" objectFit="cover"
+                      borderRadius="0"
                     />
                   </Box>
-                  <Box px={5} pb={6} pt={2}>
-                    <HStack spacing={2} mb={2.5}>
-                      <Icon as={card.icon} boxSize={4} color="brand.400" flexShrink={0} />
-                      <Heading size="sm" fontFamily="heading" fontWeight="700" color="white">{card.title}</Heading>
+                  <Box px={5} pb={6} pt={4}>
+                    <HStack spacing={2} mb={2}>
+                      <Icon as={card.icon} boxSize={4} color={NAVY} flexShrink={0} />
+                      <Heading size="sm" fontFamily="heading" fontWeight="700" color={NAVY}>
+                        {card.title}
+                      </Heading>
                     </HStack>
-                    <Text fontSize="sm" color="gray.400" lineHeight="1.75">{card.description}</Text>
+                    <Text fontSize="sm" color="gray.600" lineHeight="1.75">{card.description}</Text>
                   </Box>
                 </Box>
               </MotionBox>
@@ -261,10 +237,9 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          RESEARCH — split layout · glass stat panel · teal badge
-          Skill: 1px border, gray.400 body, teal accent
+          RESEARCH — white · split layout · mint stat panel
       ═══════════════════════════════════════════════════════════════════ */}
-      <Box bg="#0f0f0f" borderTop="1px solid" borderBottom="1px solid" borderColor="whiteAlpha.60" py={{ base: 20, md: 28 }}>
+      <Box bg="white" borderTop="1px solid #DADADA" borderBottom="1px solid #DADADA" py={{ base: 16, md: 24 }}>
         <Container maxW="1280px" px={{ base: 5, md: 10 }}>
           <Flex direction={{ base: 'column', lg: 'row' }} align="center" gap={{ base: 12, lg: 20 }}>
 
@@ -275,8 +250,12 @@ const LandingPage: React.FC = () => {
               viewport={{ once: true }}
               transition={mkT(0)}
             >
-              <Box borderRadius="xl" overflow="hidden" border="1px solid" borderColor="whiteAlpha.100">
-                <Image src="/self-awareness-ai.jpg" alt="Self-awareness insight" w="full" h={{ base: '260px', lg: '400px' }} objectFit="cover" filter="brightness(0.80)" />
+              {/* Desing.md: large images borderRadius="24px" */}
+              <Box borderRadius="24px" overflow="hidden" border="1px solid #DADADA">
+                <Image
+                  src="/self-awareness-ai.jpg" alt="Self-awareness insight"
+                  w="full" h={{ base: '260px', lg: '400px' }} objectFit="cover"
+                />
               </Box>
             </MotionBox>
 
@@ -288,40 +267,52 @@ const LandingPage: React.FC = () => {
               transition={mkT(0)}
             >
               <VStack align={{ base: 'center', lg: 'flex-start' }} spacing={5} textAlign={{ base: 'center', lg: 'left' }}>
-                <Box display="inline-flex" alignItems="center" gap={2} {...GLASS} px={4} py={1.5} borderRadius="full">
-                  <Box w={1.5} h={1.5} borderRadius="full" bg="teal.400" flexShrink={0} />
-                  <Text fontSize="11px" fontWeight="700" letterSpacing="0.10em" color="whiteAlpha.800" textTransform="uppercase" fontFamily="heading">
+                <Box
+                  display="inline-flex" alignItems="center" gap={2}
+                  bg={MINT} px={4} py={1.5} borderRadius="full"
+                >
+                  <Box w={1.5} h={1.5} borderRadius="full" bg={NAVY} flexShrink={0} />
+                  <Text fontSize="11px" fontWeight="700" letterSpacing="0.10em" color={NAVY} textTransform="uppercase" fontFamily="heading">
                     Research-Backed
                   </Text>
                 </Box>
 
-                <Box {...GLASS} px={6} py={5} w="full" maxW={{ base: '340px', lg: 'full' }} alignSelf={{ base: 'center', lg: 'flex-start' }}>
-                  <Text fontFamily="heading" fontSize={{ base: '4xl', md: '5xl' }} fontWeight="800" color="white" letterSpacing="-0.04em" lineHeight="1">
+                {/* Big stat — mint panel */}
+                <Box
+                  bg={MINT} px={6} py={5} borderRadius="xl"
+                  w="full" maxW={{ base: '340px', lg: 'full' }}
+                  alignSelf={{ base: 'center', lg: 'flex-start' }}
+                >
+                  <Text fontFamily="heading" fontSize={{ base: '4xl', md: '5xl' }} fontWeight="800" color={NAVY} letterSpacing="-0.04em" lineHeight="1">
                     85%
                   </Text>
-                  <Text fontSize="sm" color="gray.400" mt={1.5} fontWeight="500">of individuals lack a true understanding of themselves</Text>
+                  <Text fontSize="sm" color="gray.600" mt={1.5} fontWeight="500">
+                    of individuals lack a true understanding of themselves
+                  </Text>
                 </Box>
 
-                <Heading fontFamily="heading" fontSize={{ base: '2xl', md: '28px' }} fontWeight="800" color="white" letterSpacing="-0.025em" lineHeight="1.25">
+                <Heading
+                  fontFamily="heading" fontSize={{ base: '2xl', md: '28px' }}
+                  fontWeight="800" color={NAVY} letterSpacing="-0.025em" lineHeight="1.25"
+                >
                   Self-awareness gaps cost companies in{' '}
-                  <Box as="span" color="brand.400">mis-hires</Box>{' '}
+                  <Box as="span" color="teal.600">mis-hires</Box>{' '}
                   every quarter.
                 </Heading>
 
-                <Text color="gray.400" fontSize="md" lineHeight="1.8">
-                  Boost your team's self-awareness in just 30 minutes per person. Our DISC assessment
-                  surfaces the behavioural patterns that drive performance, communication, and team dynamics.
+                <Text color="gray.600" fontSize="md" lineHeight="1.8">
+                  Boost your team's self-awareness in just 30 minutes per person. Our DISC
+                  assessment surfaces the behavioural patterns that drive performance,
+                  communication, and team dynamics.
                 </Text>
-
-                <Divider borderColor="whiteAlpha.100" />
 
                 <Button
                   as={RouterLink} to="/register" size="lg"
-                  bg="white" color="gray.900" fontWeight="700" fontFamily="heading"
-                  borderRadius="xl" rightIcon={<ArrowForwardIcon />}
-                  _hover={{ bg: 'gray.100', transform: 'translateY(-1px)' }}
-                  _active={{ bg: 'gray.200', transform: 'translateY(0)' }}
-                  transition="all 0.2s ease-out" h="48px" px={7}
+                  bg={NAVY} color="white" fontWeight="700" fontFamily="heading"
+                  borderRadius="full" rightIcon={<ArrowForwardIcon />}
+                  _hover={{ bg: '#002952', transform: 'translateY(-1px)' }}
+                  _active={{ bg: '#002952', transform: 'translateY(0)' }}
+                  transition="all 0.2s ease-out"
                 >
                   Start Assessing Your Team
                 </Button>
@@ -332,58 +323,64 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          FINAL CTA — darkest section · glass testimonial · dual CTA
-          Skill: primary dark bg + glassmorphic card
+          FINAL CTA — Navy bg (Desing.md: footer/CTA sections = #003366)
       ═══════════════════════════════════════════════════════════════════ */}
-      <Box bg="#080808" py={{ base: 20, md: 24 }} position="relative" overflow="hidden">
-        <Box position="absolute" bottom="-100px" right="20%" w="500px" h="300px" borderRadius="full" bg="brand.600" opacity={0.05} filter="blur(100px)" pointerEvents="none" />
-
-        <Container maxW="760px" px={{ base: 5, md: 8 }} textAlign="center" position="relative">
+      <Box bg={NAVY} py={{ base: 16, md: 20 }}>
+        <Container maxW="760px" px={{ base: 5, md: 8 }} textAlign="center">
           <MotionBox
             initial={prefersReduced ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={mkT(0)}
           >
-            <Box {...GLASS} px={{ base: 6, md: 10 }} py={8} mb={10}>
-              <Text color="gray.400" fontSize={{ base: 'md', md: 'lg' }} fontStyle="italic" lineHeight="1.85" mb={7}>
+            {/* Testimonial card */}
+            <Box
+              bg="rgba(255,255,255,0.08)" border="1px solid rgba(255,255,255,0.12)"
+              borderRadius="xl" px={{ base: 6, md: 10 }} py={8} mb={10}
+            >
+              <Text color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} fontStyle="italic" lineHeight="1.85" mb={7}>
                 "Mindstat gave us behavioural clarity we never had before.
                 Our mis-hire rate dropped significantly in the first quarter of using it."
               </Text>
               <HStack justify="center" spacing={3}>
-                <Box w={9} h={9} bg="brand.600" borderRadius="full" flexShrink={0} display="flex" alignItems="center" justifyContent="center" border="1px solid" borderColor="whiteAlpha.200">
-                  <Text fontSize="10px" fontWeight="800" color="white" fontFamily="heading">SR</Text>
+                <Box
+                  w={9} h={9} bg="white" borderRadius="full" flexShrink={0}
+                  display="flex" alignItems="center" justifyContent="center"
+                >
+                  <Text fontSize="10px" fontWeight="800" color={NAVY} fontFamily="heading">SR</Text>
                 </Box>
                 <VStack align="start" spacing={0}>
                   <Text fontSize="sm" fontWeight="700" color="white" fontFamily="heading">Sarah R.</Text>
-                  <Text fontSize="xs" color="gray.500">Head of Talent Acquisition</Text>
+                  <Text fontSize="xs" color="whiteAlpha.600">Head of Talent Acquisition</Text>
                 </VStack>
               </HStack>
             </Box>
 
-            <Heading fontFamily="heading" fontSize={{ base: '2xl', md: '3xl' }} fontWeight="800" color="white" letterSpacing="-0.025em" mb={3}>
+            <Heading
+              fontFamily="heading" fontSize={{ base: '2xl', md: '3xl' }}
+              fontWeight="800" color="white" letterSpacing="-0.025em" mb={3}
+            >
               Ready to hire with behavioural intelligence?
             </Heading>
-            <Text color="gray.400" fontSize="md" mb={8}>Join forward-thinking teams already using Mindstat.</Text>
+            <Text color="whiteAlpha.700" fontSize="md" mb={8}>Join forward-thinking teams already using Mindstat.</Text>
 
             <HStack justify="center" spacing={3} flexWrap="wrap">
               <Button
                 as={RouterLink} to="/register" size="lg"
-                bg="white" color="gray.900" fontWeight="700" fontFamily="heading"
-                borderRadius="xl" rightIcon={<ArrowForwardIcon />}
-                _hover={{ bg: 'gray.100', transform: 'translateY(-1px)' }}
-                _active={{ bg: 'gray.200', transform: 'translateY(0)' }}
-                transition="all 0.2s ease-out" h="48px" px={7}
+                bg="white" color={NAVY} fontWeight="700" fontFamily="heading"
+                borderRadius="full" rightIcon={<ArrowForwardIcon />}
+                _hover={{ bg: MINT, transform: 'translateY(-1px)' }}
+                _active={{ transform: 'translateY(0)' }}
+                transition="all 0.2s ease-out"
               >
                 Get Started Free
               </Button>
               <Button
                 as={RouterLink} to="/about" size="lg" variant="outline"
-                color="whiteAlpha.700" borderColor="whiteAlpha.200"
-                borderRadius="xl" fontWeight="600" fontFamily="heading"
-                _hover={{ bg: 'whiteAlpha.50', borderColor: 'whiteAlpha.400', color: 'white' }}
-                _active={{ bg: 'whiteAlpha.100' }}
-                transition="all 0.2s ease-out" h="48px" px={7}
+                color="white" borderColor="rgba(255,255,255,0.40)"
+                borderRadius="full" fontWeight="600" fontFamily="heading"
+                _hover={{ bg: 'rgba(255,255,255,0.10)', borderColor: 'white' }}
+                transition="all 0.2s ease-out"
               >
                 Learn More
               </Button>
@@ -397,3 +394,4 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
+

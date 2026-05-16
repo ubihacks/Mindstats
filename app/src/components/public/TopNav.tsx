@@ -22,14 +22,12 @@ const TopNav: React.FC = () => {
   return (
     <Box
       as="nav"
-      bg="rgba(8, 8, 8, 0.88)"
-      backdropFilter="blur(16px)"
-      sx={{ WebkitBackdropFilter: 'blur(16px)' }}
+      bg="#003366"
       position="sticky"
       top={0}
       zIndex={100}
       borderBottom="1px solid"
-      borderColor="whiteAlpha.80"
+      borderColor="rgba(255,255,255,0.10)"
     >
       <Flex
         maxW="1280px"
@@ -135,7 +133,7 @@ const TopNav: React.FC = () => {
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg="#0f0f0f" borderLeft="1px solid" borderColor="whiteAlpha.100">
+        <DrawerContent bg="#003366" borderLeft="1px solid" borderColor="rgba(255,255,255,0.10)">
           <DrawerCloseButton color="white" />
           <DrawerBody pt={16}>
             <VStack spacing={2} align="stretch">

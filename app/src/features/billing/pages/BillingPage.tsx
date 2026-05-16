@@ -27,10 +27,10 @@ const PLAN_ICONS: Record<PlanType, React.ElementType> = {
 };
 
 const PLAN_COLORS: Record<PlanType, { accent: string; bg: string; text: string }> = {
-  ON_DEMAND: { accent: '#818CF8', bg: 'rgba(99,102,241,0.12)',  text: '#A5B4FC' },
-  STEADY:    { accent: '#38BDF8', bg: 'rgba(14,165,233,0.10)',  text: '#7DD3FC' },
-  GROWTH:    { accent: '#A78BFA', bg: 'rgba(139,92,246,0.12)', text: '#C4B5FD' },
-  SCALE:     { accent: '#F472B6', bg: 'rgba(236,72,153,0.12)', text: '#FBCFE8' },
+  ON_DEMAND: { accent: '#6366F1', bg: '#EEF2FF', text: '#4338CA' },
+  STEADY:    { accent: '#0EA5E9', bg: '#E0F2FE', text: '#0369A1' },
+  GROWTH:    { accent: '#8B5CF6', bg: '#EDE9FE', text: '#6D28D9' },
+  SCALE:     { accent: '#EC4899', bg: '#FCE7F3', text: '#BE185D' },
 };
 
 const BillingPage: React.FC = () => {

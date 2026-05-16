@@ -1,7 +1,7 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 
 const config: ThemeConfig = {
-  initialColorMode: 'dark',
+  initialColorMode: 'light',
   useSystemColorMode: false,
 };
 
@@ -23,19 +23,18 @@ const colors = {
     500: '#333333',  // muted interactive border
   },
 
-  // Primary: Blue accent — visible on dark backgrounds
-  // Source: ui-ux-pro colors.csv #1 SaaS General (#2563EB primary)
+  // Primary: MindStats Navy — Desing.md brand guide
   brand: {
-    50:  '#EFF6FF',  // lightest tint — badge backgrounds on white
-    100: '#DBEAFE',  // light — badge text bg on white
-    200: '#BFDBFE',  // medium-light
-    300: '#93C5FD',  // accent light — text on dark bg
-    400: '#60A5FA',  // interactive mid
-    500: '#3B82F6',  // primary interactive
-    600: '#2563EB',  // ★ PRIMARY CTA — ui-ux-pro SaaS primary
-    700: '#1D4ED8',  // CTA hover
-    800: '#1E3A8A',  // dark elements / sidebar
-    900: '#0F172A',  // ★ HERO BG — pure deep dark (ui-ux-pro B2B primary)
+    50:  '#E8F3ED',  // ★ MINT — feature block bg (Desing.md)
+    100: '#CCE0FF',  // light badge bg
+    200: '#99BBFF',  // medium-light
+    300: '#6699EE',  // accent light
+    400: '#3377CC',  // interactive mid
+    500: '#1155BB',  // primary interactive
+    600: '#003366',  // ★ PRIMARY — MindStats navy (Desing.md)
+    700: '#002952',  // hover state
+    800: '#001F3D',  // deep navy / sidebar
+    900: '#001428',  // darkest
   },
 
   // Accent: Teal — standard Tailwind, WCAG-safe success / focus states
@@ -79,11 +78,11 @@ const fonts = {
 // UI/UX Pro Skill: No heavy drop-shadows. 1px border depth instead.
 // Use only subtle glows for focus / hover illumination.
 const shadows = {
-  card:         'none',
-  'card-hover': '0 0 0 1px rgba(255,255,255,0.08)',  // border-glow on hover
-  'card-focus': '0 0 0 2px rgba(96,165,250,0.40)',   // brand.400 focus ring
-  'brand-glow': '0 0 20px rgba(37,99,235,0.30)',
-  'teal-glow':  '0 0 20px rgba(20,184,166,0.28)',
+  card:         '0 1px 3px rgba(0,0,0,0.06)',
+  'card-hover': '0 4px 16px rgba(0,0,0,0.10)',
+  'card-focus': '0 0 0 3px rgba(0,51,102,0.20)',
+  'brand-glow': '0 4px 20px rgba(0,51,102,0.20)',
+  'teal-glow':  '0 4px 20px rgba(20,184,166,0.20)',
 };
 
 // Rounded shape language — approachable yet professional
@@ -103,12 +102,12 @@ const components = {
     baseStyle: {
       fontFamily: 'heading',
       fontWeight: '700',
-      borderRadius: 'md',
+      borderRadius: 'full',
       letterSpacing: '0.01em',
-      _focusVisible: { boxShadow: '0 0 0 3px rgba(0,106,106,0.30)' },
+      _focusVisible: { boxShadow: '0 0 0 3px rgba(0,51,102,0.30)' },
     },
     sizes: {
-      lg: { h: '48px', px: '24px', fontSize: 'md', borderRadius: 'md' },
+      lg: { h: '52px', px: '28px', fontSize: 'md', borderRadius: 'full' },
       md: { h: '40px', px: '20px', fontSize: 'sm' },
       sm: { h: '32px', px: '14px', fontSize: 'xs' },
     },
@@ -147,15 +146,16 @@ const components = {
       outline: {
         field: {
           borderRadius: 'md',
-          borderColor:  'whiteAlpha.200',
-          bg:           'dark.850',
+          borderColor:  'gray.300',
+          bg:           '#f3f3f4',
           fontSize:     'sm',
-          _hover:       { borderColor: 'whiteAlpha.300' },
+          _hover:       { borderColor: 'gray.400' },
           _focus: {
+            bg:          'white',
             borderColor: 'brand.600',
             boxShadow:   '0 0 0 1px var(--chakra-colors-brand-600)',
           },
-          _placeholder: { color: 'whiteAlpha.400' },
+          _placeholder: { color: 'gray.400' },
         },
       },
     },
@@ -167,10 +167,11 @@ const components = {
       outline: {
         field: {
           borderRadius: 'md',
-          borderColor:  'whiteAlpha.200',
+          borderColor:  'gray.300',
+          bg:           '#f3f3f4',
           fontSize:     'sm',
-          _hover: { borderColor: 'whiteAlpha.300' },
-          _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
+          _hover: { borderColor: 'gray.400' },
+          _focus: { bg: 'white', borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
         },
       },
     },
@@ -181,10 +182,11 @@ const components = {
     variants: {
       outline: {
         borderRadius: 'md',
-        borderColor:  'whiteAlpha.200',
+        borderColor:  'gray.300',
+        bg:           '#f3f3f4',
         fontSize:     'sm',
-        _hover:  { borderColor: 'whiteAlpha.300' },
-        _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
+        _hover:  { borderColor: 'gray.400' },
+        _focus: { bg: 'white', borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
       },
     },
   },
@@ -195,7 +197,7 @@ const components = {
       fontFamily:    'heading',
       letterSpacing: '-0.02em',
       fontWeight:    '700',
-      color:         'white',
+      color:         '#003366',
     },
   },
 
@@ -215,9 +217,7 @@ const components = {
       dialog: {
         borderRadius: '2xl',
         boxShadow:    'xl',
-        bg:           'dark.850',
-        border:       '1px solid',
-        borderColor:  'whiteAlpha.100',
+        bg:           'white',
       },
       header: {
         fontFamily:    'heading',
@@ -225,7 +225,7 @@ const components = {
         fontSize:      'lg',
         letterSpacing: '-0.02em',
         pb:            3,
-        color:         'white',
+        color:         'gray.800',
       },
       overlay: {
         backdropFilter: 'blur(2px)',
@@ -243,16 +243,16 @@ const components = {
           fontWeight:    '700',
           textTransform: 'uppercase',
           letterSpacing: '0.06em',
-          color:         'gray.400',
-          borderColor:   'whiteAlpha.100',
+          color:         'gray.600',
+          borderColor:   'gray.200',
           py:            3,
-          bg:            'dark.850',
+          bg:            'gray.50',
         },
         td: {
-          borderColor: 'whiteAlpha.100',
+          borderColor: 'gray.100',
           py:          3.5,
           fontSize:    'sm',
-          color:       'gray.200',
+          color:       'gray.800',
         },
       },
     },
@@ -274,7 +274,7 @@ const components = {
     baseStyle: {
       fontWeight: '600',
       fontSize:   'sm',
-      color:      'gray.300',
+      color:      'gray.700',
       mb:         1.5,
       letterSpacing: '0.01em',
     },
@@ -284,7 +284,7 @@ const components = {
   Progress: {
     defaultProps: { colorScheme: 'teal' },
     baseStyle: {
-      track:     { borderRadius: 'full', bg: 'whiteAlpha.100' },
+      track:     { borderRadius: 'full', bg: 'gray.200' },
       filledTrack: { borderRadius: 'full' },
     },
   },
@@ -300,21 +300,20 @@ const theme = extendTheme({
   styles: {
     global: {
       'html, body': {
-        bg:                   'dark.900',   // #080808 — deepest dark layer
-        color:                'whiteAlpha.900',
+        bg:                   'white',
+        color:                '#333333',
         WebkitFontSmoothing:  'antialiased',
         MozOsxFontSmoothing:  'grayscale',
         lineHeight:           '1.6',
       },
-      // Tonal separation — 1px razor-sharp white border (UI.md rule)
       '*': {
-        borderColor: 'whiteAlpha.100',
+        borderColor: '#DADADA',
       },
       // Refined scrollbar
       '::-webkit-scrollbar':        { width: '5px', height: '5px' },
       '::-webkit-scrollbar-track':  { bg: 'transparent' },
-      '::-webkit-scrollbar-thumb':  { bg: 'whiteAlpha.200', borderRadius: 'full' },
-      '::-webkit-scrollbar-thumb:hover': { bg: 'whiteAlpha.300' },
+      '::-webkit-scrollbar-thumb':  { bg: 'gray.300', borderRadius: 'full' },
+      '::-webkit-scrollbar-thumb:hover': { bg: 'gray.400' },
     },
   },
 });

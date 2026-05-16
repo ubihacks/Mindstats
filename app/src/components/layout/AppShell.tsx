@@ -6,7 +6,7 @@ import DataBootstrap from '../DataBootstrap';
 
 const AppShell: React.FC = () => {
   return (
-    <Flex minH="100vh" bg="dark.900">
+    <Flex minH="100vh" bg="#fbf9f8">
       <DataBootstrap />
       <Sidebar />
       <Box
