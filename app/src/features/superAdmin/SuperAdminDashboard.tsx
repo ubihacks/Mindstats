@@ -18,7 +18,7 @@ import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   fetchAllCompanies, fetchAllUsers,
-  updateCompanyCredits, createCompany,
+  updateCompanyCredits, createCompany, createUser,
   type CompanyOverview,
 } from './superAdminSlice';
 
@@ -549,14 +549,21 @@ const AnalyticsView: React.FC = () => {
 ══════════════════════════════════════════════════════════════════════════ */
 const UsersView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { users, usersStatus } = useAppSelector((s) => s.superAdmin);
+  const { users, usersStatus, companies } = useAppSelector((s) => s.superAdmin);
   const isLoading = usersStatus === 'loading';
+  const toast = useToast();
 
   const [search, setSearch] = useState('');
+  const addDisc = useDisclosure();
+  const [adding, setAdding] = useState(false);
+  const [userForm, setUserForm] = useState({
+    email: '', password: '', companyDomain: '', role: 'HR',
+  });
 
   useEffect(() => {
     if (usersStatus === 'idle') dispatch(fetchAllUsers());
-  }, [dispatch, usersStatus]);
+    if (companies.length === 0) dispatch(fetchAllCompanies());
+  }, [dispatch, usersStatus, companies.length]);
 
   const filtered = users.filter((u) =>
     !search ||
@@ -568,18 +575,49 @@ const UsersView: React.FC = () => {
   const roleCount: Record<string, number> = {};
   users.forEach((u) => { roleCount[u.role] = (roleCount[u.role] ?? 0) + 1; });
 
+  const handleAddUser = async () => {
+    if (!userForm.email || !userForm.password || !userForm.companyDomain) {
+      toast({ title: 'Email, password and company are required.', status: 'warning', duration: 3000, isClosable: true });
+      return;
+    }
+    setAdding(true);
+    const matched = companies.find((c) => c.domain === userForm.companyDomain);
+    const result = await dispatch(createUser({
+      email:         userForm.email.trim().toLowerCase(),
+      password:      userForm.password,
+      companyName:   matched?.name ?? userForm.companyDomain,
+      companyDomain: userForm.companyDomain,
+      role:          userForm.role,
+    }));
+    setAdding(false);
+    if (createUser.fulfilled.match(result)) {
+      toast({ title: 'User created', description: userForm.email, status: 'success', duration: 3000, isClosable: true });
+      setUserForm({ email: '', password: '', companyDomain: '', role: 'HR' });
+      addDisc.onClose();
+    } else {
+      toast({ title: 'Failed to create user', description: result.payload as string, status: 'error', duration: 5000, isClosable: true });
+    }
+  };
+
   return (
     <>
       <SectionHeader
         title="Users"
         subtitle={`${users.length} user${users.length !== 1 ? 's' : ''} across all workspaces`}
         action={
-          <Button leftIcon={<Icon as={MdRefresh} />} size="sm" variant="outline"
-            borderColor="gray.200" color="gray.600" fontWeight="600"
-            onClick={() => dispatch(fetchAllUsers())} isLoading={isLoading}
-            _hover={{ bg: 'gray.50' }}>
-            Refresh
-          </Button>
+          <HStack spacing={2}>
+            <Button leftIcon={<Icon as={MdRefresh} />} size="sm" variant="outline"
+              borderColor="gray.200" color="gray.600" fontWeight="600"
+              onClick={() => dispatch(fetchAllUsers())} isLoading={isLoading}
+              _hover={{ bg: 'gray.50' }}>
+              Refresh
+            </Button>
+            <Button leftIcon={<AddIcon />} size="sm" bg={NAVY} color="white"
+              borderRadius="full" fontWeight="700"
+              onClick={addDisc.onOpen} _hover={{ bg: '#002952' }}>
+              Add User
+            </Button>
+          </HStack>
         }
       />
 
@@ -639,6 +677,72 @@ const UsersView: React.FC = () => {
           <Flex justify="center" py={12}><Text color="gray.400" fontSize="sm">No users match your search.</Text></Flex>
         )}
       </Box>
+
+      {/* ── Add User Modal ── */}
+      <Modal isOpen={addDisc.isOpen} onClose={addDisc.onClose} isCentered size="md">
+        <ModalOverlay backdropFilter="blur(4px)" />
+        <ModalContent borderRadius="2xl">
+          <ModalHeader fontWeight="800" fontSize="lg" pt={6} letterSpacing="-0.03em">Add New User</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel fontSize="sm" fontWeight="600" color="gray.700">Email Address</FormLabel>
+                <Input
+                  type="email"
+                  placeholder="jane@acme.com"
+                  value={userForm.email}
+                  onChange={(e) => setUserForm((f) => ({ ...f, email: e.target.value }))}
+                  bg="#f3f3f4" borderColor="gray.200" _focus={{ bg: 'white', borderColor: NAVY }}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel fontSize="sm" fontWeight="600" color="gray.700">Temporary Password</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Min 8 characters"
+                  value={userForm.password}
+                  onChange={(e) => setUserForm((f) => ({ ...f, password: e.target.value }))}
+                  bg="#f3f3f4" borderColor="gray.200" _focus={{ bg: 'white', borderColor: NAVY }}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel fontSize="sm" fontWeight="600" color="gray.700">Company</FormLabel>
+                <Select
+                  placeholder="Select a company…"
+                  value={userForm.companyDomain}
+                  onChange={(e) => setUserForm((f) => ({ ...f, companyDomain: e.target.value }))}
+                  bg="#f3f3f4" borderColor="gray.200" _focus={{ bg: 'white', borderColor: NAVY }}
+                >
+                  {companies.map((c) => (
+                    <option key={c.id} value={c.domain}>{c.name} ({c.domain})</option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel fontSize="sm" fontWeight="600" color="gray.700">Role</FormLabel>
+                <Select
+                  value={userForm.role}
+                  onChange={(e) => setUserForm((f) => ({ ...f, role: e.target.value }))}
+                  bg="#f3f3f4" borderColor="gray.200" _focus={{ bg: 'white', borderColor: NAVY }}
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="HR">HR</option>
+                  <option value="HIRING_MANAGER">Hiring Manager</option>
+                </Select>
+              </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter gap={2} pb={6}>
+            <Button variant="ghost" onClick={addDisc.onClose} size="sm">Cancel</Button>
+            <Button bg={NAVY} color="white" size="sm" borderRadius="full" fontWeight="700"
+              isLoading={adding} loadingText="Creating…"
+              onClick={handleAddUser} _hover={{ bg: '#002952' }}>
+              Create User
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

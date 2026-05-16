@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase, supabaseAdmin } from '../../lib/supabaseClient';
 import type { UIStatus } from '../../types';
 
 export interface CompanyOverview {
@@ -166,6 +166,52 @@ export const fetchAllUsers = createAsyncThunk(
   }
 );
 
+export const createUser = createAsyncThunk(
+  'superAdmin/createUser',
+  async (
+    payload: { email: string; password: string; companyName: string; companyDomain: string; role: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      if (!supabaseAdmin) return rejectWithValue('VITE_SUPABASE_SERVICE_ROLE_KEY is not configured.');
+
+      const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.createUser({
+        email: payload.email,
+        password: payload.password,
+        email_confirm: true,
+      });
+      if (authErr) return rejectWithValue(authErr.message);
+
+      const userId = authData.user.id;
+      const { data, error: profErr } = await supabaseAdmin
+        .from('profiles')
+        .upsert({
+          id:                  userId,
+          email:               payload.email,
+          company_name:        payload.companyName,
+          company_domain:      payload.companyDomain.trim().toLowerCase(),
+          role:                payload.role,
+          is_first_domain_user: false,
+        })
+        .select()
+        .single();
+      if (profErr) return rejectWithValue(profErr.message);
+
+      return {
+        id:                data.id,
+        email:             data.email,
+        companyName:       data.company_name,
+        companyDomain:     data.company_domain,
+        role:              data.role,
+        isFirstDomainUser: data.is_first_domain_user,
+        createdAt:         data.created_at,
+      } as UserProfile;
+    } catch {
+      return rejectWithValue('Failed to create user');
+    }
+  }
+);
+
 const superAdminSlice = createSlice({
   name: 'superAdmin',
   initialState,
@@ -184,7 +230,8 @@ const superAdminSlice = createSlice({
       })
       .addCase(fetchAllUsers.pending,  (state) => { state.usersStatus = 'loading'; })
       .addCase(fetchAllUsers.fulfilled, (state, action) => { state.usersStatus = 'success'; state.users = action.payload; })
-      .addCase(fetchAllUsers.rejected, (state) => { state.usersStatus = 'error'; });
+      .addCase(fetchAllUsers.rejected, (state) => { state.usersStatus = 'error'; })
+      .addCase(createUser.fulfilled, (state, action) => { state.users.unshift(action.payload); });
   },
 });
 

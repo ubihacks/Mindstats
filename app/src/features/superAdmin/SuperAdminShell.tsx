@@ -124,8 +124,10 @@ const SuperAdminShell: React.FC = () => {
       </Box>
 
       {/* ── Main content ── */}
-      <Box ml="240px" flex={1} minH="100vh" bg="gray.50">
-        <Outlet />
+      <Box ml="240px" flex={1} minH="100vh" bg="gray.50" p={{ base: 6, md: 8, lg: 10 }}>
+        <Box maxW="1400px" mx="auto">
+          <Outlet />
+        </Box>
       </Box>
     </Flex>
   );
