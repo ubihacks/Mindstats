@@ -1,19 +1,27 @@
+﻿/**
+ * LoginPage — Desing.md · Light Professional
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Left:  Deep navy #001e40 brand panel · logo · tagline · features · testimonial
+ * Right: White canvas · #f3f3f4 filled inputs · navy pill submit button
+ */
 import React, { useState } from 'react';
 import {
-  Box, Button, FormControl, FormLabel, FormErrorMessage,
-  Heading, Input, Text, VStack, Alert, AlertIcon, Link as ChakraLink,
-  InputGroup, InputRightElement, IconButton, HStack, Flex, Icon,
-  List, ListItem, ListIcon, Image,
+  Box, Button, Flex, FormControl, FormLabel, FormErrorMessage,
+  Heading, HStack, Icon, IconButton, Image, Input, InputGroup,
+  InputRightElement, Link as ChakraLink, Text, VStack, Alert, AlertIcon,
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { MdCheckCircle } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { loginUser } from '../authSlice';
-import { isCompanyEmail } from '../authSlice';
-import { ViewIcon, ViewOffIcon, CheckCircleIcon } from '@chakra-ui/icons';
+import { loginUser, isCompanyEmail } from '../authSlice';
 
+/* ── Design tokens (Desing.md + DESIGN.md) ───────────────────────────────── */
+const NAVY  = '#001e40';  // DESIGN.md primary
+const TEAL  = 'teal.300';
 
 const schema = z.object({
   email: z
@@ -26,86 +34,138 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const FEATURES = [
-  'Match candidates to hiring manager behavioural profiles',
-  'Gatekeeper workflow — HM must complete before candidates',
-  '28-question DISC behavioural intelligence engine',
-  'Credit-based pricing with 2-week link expiry refunds',
+  'Match candidates to hiring manager DISC profiles',
+  'Gatekeeper workflow — HM completes first, always',
+  '28-question behavioural intelligence engine',
+  'Credit-based pricing with automatic link-expiry refunds',
 ];
 
-const LoginPage: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { status, error, user, initialized } = useAppSelector((s) => s.auth);
-  const [showPassword, setShowPassword] = useState(false);
+/* ══════════════════════════════════════════════════════════════════════════ */
 
-  // Already logged in — go straight to dashboard
+const LoginPage: React.FC = () => {
+  const dispatch  = useAppDispatch();
+  const navigate  = useNavigate();
+  const [showPw, setShowPw] = useState(false);
+
+  const { status, error, user, initialized } = useAppSelector((s) => s.auth);
+
   React.useEffect(() => {
     if (initialized && user) navigate('/dashboard', { replace: true });
   }, [initialized, user, navigate]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
 
   const onSubmit = async (data: FormData) => {
     const result = await dispatch(loginUser(data));
-    if (loginUser.fulfilled.match(result)) {
-      navigate('/dashboard', { replace: true });
-    }
+    if (loginUser.fulfilled.match(result)) navigate('/dashboard', { replace: true });
   };
 
   return (
     <Flex minH="100vh">
-      {/* ── Left: Brand Panel ── */}
-      <Box
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          LEFT PANEL — deep navy, full brand presence
+      ═══════════════════════════════════════════════════════════════════ */}
+      <Flex
         display={{ base: 'none', lg: 'flex' }}
         flexDirection="column"
         justifyContent="space-between"
-        w="45%"
-        bg="slate.900"
+        w="46%"
+        bg={NAVY}
         p={14}
         position="relative"
         overflow="hidden"
       >
-        {/* Decorative circles */}
+        {/* Subtle teal glow — decorative */}
         <Box
-          position="absolute"
-          top="-80px"
-          right="-80px"
-          w="320px"
-          h="320px"
-          borderRadius="full"
-          bg="brand.700"
-          opacity={0.15}
-          filter="blur(60px)"
+          position="absolute" bottom="-80px" right="-60px"
+          w="380px" h="380px" borderRadius="full"
+          bg="teal.400" opacity={0.07} filter="blur(90px)"
+          pointerEvents="none"
         />
         <Box
-          position="absolute"
-          bottom="-60px"
-          left="-60px"
-          w="240px"
-          h="240px"
-          borderRadius="full"
-          bg="teal.600"
-          opacity={0.1}
-          filter="blur(50px)"
+          position="absolute" top="-40px" left="-40px"
+          w="220px" h="220px" borderRadius="full"
+          bg="blue.400" opacity={0.06} filter="blur(60px)"
+          pointerEvents="none"
         />
 
-        {/* Logo */}
-        <HStack spacing={3} zIndex={1}>
-          <Image src="/mindstat-favicon.svg" h="36px" w="36px" alt="Mindstat icon" />
-          <VStack align="start" spacing={0}>
-            <Image src="/mindstats-logo.svg" h="26px" filter="brightness(0) invert(1)" alt="Mindstat" />
-            <Text fontSize="xs" color="whiteAlpha.500">Behavioural Intelligence</Text>
+        {/* ── Logo ── */}
+        <Image
+          src="/mindstats-logo.svg"
+          h="24px"
+          filter="brightness(0) invert(1)"
+          alt="Mindstat"
+          zIndex={1}
+        />
+
+        {/* ── Hero copy + feature list ── */}
+        <VStack align="start" spacing={9} zIndex={1}>
+          <Box>
+            <Text
+              fontSize="10px" fontWeight="700" letterSpacing="0.14em"
+              textTransform="uppercase" color={TEAL} mb={4}
+            >
+              Behavioural Intelligence Platform
+            </Text>
+            <Heading
+              fontFamily="heading"
+              fontSize={{ lg: '30px', xl: '36px' }}
+              fontWeight="800"
+              color="white"
+              lineHeight="1.14"
+              letterSpacing="-0.03em"
+            >
+              Hire beyond the résumé.{' '}
+              <Box as="span" color={TEAL}>Match on behaviour.</Box>
+            </Heading>
+          </Box>
+
+          <VStack align="start" spacing={3.5}>
+            {FEATURES.map((f) => (
+              <HStack key={f} spacing={3} align="start">
+                <Icon as={MdCheckCircle} color={TEAL} boxSize={4} mt={0.5} flexShrink={0} />
+                <Text fontSize="sm" color="whiteAlpha.800" lineHeight="1.65">{f}</Text>
+              </HStack>
+            ))}
           </VStack>
-        </HStack>
+        </VStack>
 
+        {/* ── Testimonial ── */}
+        <Box
+          bg="rgba(255,255,255,0.07)"
+          border="1px solid rgba(255,255,255,0.11)"
+          borderRadius="xl"
+          px={5} py={4}
+          zIndex={1}
+        >
+          <Text
+            fontSize="sm" color="whiteAlpha.800"
+            fontStyle="italic" lineHeight="1.75" mb={4}
+          >
+            "Mindstat helped us cut mis-hires by surfacing behavioural patterns
+            no résumé could ever reveal."
+          </Text>
+          <HStack spacing={2.5}>
+            <Box
+              w={8} h={8} bg="teal.400" borderRadius="full"
+              display="flex" alignItems="center" justifyContent="center" flexShrink={0}
+            >
+              <Text fontSize="10px" fontWeight="800" color="white">SR</Text>
+            </Box>
+            <VStack align="start" spacing={0}>
+              <Text fontSize="xs" fontWeight="700" color="white">Sarah R.</Text>
+              <Text fontSize="10px" color="whiteAlpha.500">Head of Talent Acquisition</Text>
+            </VStack>
+          </HStack>
+        </Box>
+      </Flex>
 
-      </Box>
-
-      {/* ── Right: Login Form ── */}
+      {/* ═══════════════════════════════════════════════════════════════════
+          RIGHT PANEL — white canvas, clean form
+      ═══════════════════════════════════════════════════════════════════ */}
       <Flex
         flex={1}
         bg="white"
@@ -115,22 +175,28 @@ const LoginPage: React.FC = () => {
         py={12}
       >
         <Box w="full" maxW="400px">
+
           {/* Mobile logo */}
-          <HStack spacing={2} mb={10} display={{ base: 'flex', lg: 'none' }}>
-            <Image src="/mindstat-favicon.svg" h="30px" w="30px" alt="Mindstat icon" />
+          <Box mb={10} display={{ base: 'block', lg: 'none' }}>
             <Image src="/mindstats-logo.svg" h="22px" alt="Mindstat" />
-          </HStack>
+          </Box>
 
           <VStack spacing={8} align="stretch">
+
+            {/* Heading */}
             <VStack align="start" spacing={1}>
-              <Heading size="lg" fontWeight="800" color="slate.900" letterSpacing="-0.03em">
+              <Heading
+                size="lg" fontWeight="800" fontFamily="heading"
+                color="gray.900" letterSpacing="-0.03em"
+              >
                 Welcome back
               </Heading>
-              <Text color="slate.500" fontSize="sm">
+              <Text color="gray.500" fontSize="sm">
                 Sign in to your workspace to continue
               </Text>
             </VStack>
 
+            {/* Error banner */}
             {error && (
               <Alert status="error" borderRadius="xl" fontSize="sm">
                 <AlertIcon />
@@ -138,10 +204,13 @@ const LoginPage: React.FC = () => {
               </Alert>
             )}
 
+            {/* Form */}
             <form onSubmit={handleSubmit(onSubmit)}>
               <VStack spacing={5}>
+
+                {/* Email */}
                 <FormControl isInvalid={!!errors.email}>
-                  <FormLabel fontWeight="600" fontSize="sm" color="slate.700" mb={1.5}>
+                  <FormLabel fontWeight="600" fontSize="sm" color="gray.700" mb={1.5}>
                     Company Email
                   </FormLabel>
                   <Input
@@ -149,91 +218,104 @@ const LoginPage: React.FC = () => {
                     type="email"
                     placeholder="you@company.com"
                     size="lg"
-                    bg="slate.50"
+                    bg="#f3f3f4"
                     border="1.5px solid"
-                    borderColor="slate.200"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    _hover={{ borderColor: 'gray.400' }}
+                    _focus={{ bg: 'white', borderColor: NAVY, boxShadow: `0 0 0 1px ${NAVY}` }}
+                    _placeholder={{ color: 'gray.400' }}
+                    transition="all 0.15s"
                   />
                   <FormErrorMessage fontSize="xs">{errors.email?.message}</FormErrorMessage>
                 </FormControl>
 
+                {/* Password */}
                 <FormControl isInvalid={!!errors.password}>
-                  <FormLabel fontWeight="600" fontSize="sm" color="slate.700" mb={1.5}>
-                    Password
-                  </FormLabel>
+                  {/* Label row with inline forgot-password link */}
+                  <Flex justify="space-between" align="center" mb={1.5}>
+                    <FormLabel fontWeight="600" fontSize="sm" color="gray.700" mb={0}>
+                      Password
+                    </FormLabel>
+                    <ChakraLink
+                      as={RouterLink} to="/forgot-password"
+                      fontSize="xs" color="gray.500"
+                      _hover={{ color: 'brand.600', textDecoration: 'none' }}
+                    >
+                      Forgot password?
+                    </ChakraLink>
+                  </Flex>
                   <InputGroup size="lg">
                     <Input
                       {...register('password')}
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPw ? 'text' : 'password'}
                       placeholder="••••••••"
-                      bg="slate.50"
+                      bg="#f3f3f4"
                       border="1.5px solid"
-                      borderColor="slate.200"
+                      borderColor="gray.200"
+                      borderRadius="md"
+                      _hover={{ borderColor: 'gray.400' }}
+                      _focus={{ bg: 'white', borderColor: NAVY, boxShadow: `0 0 0 1px ${NAVY}` }}
+                      _placeholder={{ color: 'gray.400' }}
+                      transition="all 0.15s"
                     />
                     <InputRightElement>
                       <IconButton
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
-                        icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                        aria-label={showPw ? 'Hide password' : 'Show password'}
+                        icon={showPw ? <ViewOffIcon /> : <ViewIcon />}
                         variant="ghost"
                         size="sm"
-                        color="slate.400"
-                        onClick={() => setShowPassword((v) => !v)}
-                        _hover={{ color: 'slate.700' }}
+                        color="gray.400"
+                        onClick={() => setShowPw((v) => !v)}
+                        _hover={{ color: 'gray.700', bg: 'transparent' }}
                       />
                     </InputRightElement>
                   </InputGroup>
                   <FormErrorMessage fontSize="xs">{errors.password?.message}</FormErrorMessage>
                 </FormControl>
 
+                {/* Submit — navy pill */}
                 <Button
                   type="submit"
-                  bg="brand.600"
+                  bg={NAVY}
                   color="white"
                   size="lg"
                   w="full"
+                  borderRadius="full"
                   isLoading={status === 'loading'}
                   loadingText="Signing in…"
                   fontWeight="700"
-                  _hover={{ bg: 'brand.700', transform: 'translateY(-1px)', boxShadow: 'brand-glow' }}
-                  _active={{ bg: 'brand.800', transform: 'translateY(0)' }}
-                  _focusVisible={{ boxShadow: '0 0 0 3px rgba(79,70,229,0.35)' }}
+                  fontFamily="heading"
+                  _hover={{ bg: '#002952', transform: 'translateY(-1px)' }}
+                  _active={{ bg: '#001428', transform: 'translateY(0)' }}
                   transition="all 0.15s"
                   mt={1}
                 >
                   Sign In
                 </Button>
 
-                <ChakraLink
-                  as={RouterLink}
-                  to="/forgot-password"
-                  fontSize="sm"
-                  color="slate.500"
-                  textAlign="center"
-                  display="block"
-                  _hover={{ color: 'brand.600', textDecoration: 'none' }}
-                >
-                  Forgot password?
-                </ChakraLink>
               </VStack>
             </form>
 
+            {/* Register link */}
             <HStack justify="center" spacing={1}>
-              <Text fontSize="sm" color="slate.500">Don't have an account?</Text>
+              <Text fontSize="sm" color="gray.500">Don't have an account?</Text>
               <ChakraLink
-                as={RouterLink}
-                to="/register"
-                color="brand.600"
-                fontWeight="600"
-                fontSize="sm"
+                as={RouterLink} to="/register"
+                color="brand.600" fontWeight="600" fontSize="sm"
                 _hover={{ color: 'brand.700', textDecoration: 'none' }}
               >
                 Create workspace →
               </ChakraLink>
             </HStack>
+
           </VStack>
         </Box>
       </Flex>
+
     </Flex>
   );
 };
 
 export default LoginPage;
+
