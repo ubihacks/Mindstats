@@ -35,7 +35,7 @@ const SuperAdminShell: React.FC = () => {
       <Box
         w="240px"
         minH="100vh"
-        bg="gray.900"
+        bg="#001e40"
         position="fixed"
         top={0}
         left={0}

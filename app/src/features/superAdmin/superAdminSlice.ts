@@ -16,16 +16,30 @@ export interface CompanyOverview {
   roleCount: number;
 }
 
+export interface UserProfile {
+  id: string;
+  email: string;
+  companyName: string;
+  companyDomain: string;
+  role: string;
+  isFirstDomainUser: boolean;
+  createdAt: string;
+}
+
 export interface SuperAdminState {
-  companies: CompanyOverview[];
-  status: UIStatus;
-  error: string | null;
+  companies:    CompanyOverview[];
+  users:        UserProfile[];
+  status:       UIStatus;
+  usersStatus:  UIStatus;
+  error:        string | null;
 }
 
 const initialState: SuperAdminState = {
-  companies: [],
-  status: 'idle',
-  error: null,
+  companies:   [],
+  users:       [],
+  status:      'idle',
+  usersStatus: 'idle',
+  error:       null,
 };
 
 export const fetchAllCompanies = createAsyncThunk(
@@ -92,29 +106,87 @@ export const updateCompanyCredits = createAsyncThunk(
   }
 );
 
+export const createCompany = createAsyncThunk(
+  'superAdmin/createCompany',
+  async (
+    payload: { name: string; website: string; domain: string; credits: number; plan: string },
+    { rejectWithValue }
+  ) => {
+    const { data, error } = await supabase
+      .from('companies')
+      .insert({
+        name:          payload.name.trim(),
+        website:       payload.website.trim(),
+        domain:        payload.domain.trim().toLowerCase(),
+        credits:       payload.credits,
+        current_plan:  payload.plan || null,
+        payment_cycle: 'MONTHLY',
+        used_credits:  0,
+      })
+      .select()
+      .single();
+    if (error) return rejectWithValue(error.message);
+    return {
+      id:           data.id,
+      name:         data.name,
+      domain:       data.domain,
+      website:      data.website,
+      currentPlan:  data.current_plan,
+      paymentCycle: data.payment_cycle,
+      credits:      data.credits,
+      usedCredits:  data.used_credits,
+      createdAt:    data.created_at,
+      userCount:    0,
+      roleCount:    0,
+    } as CompanyOverview;
+  }
+);
+
+export const fetchAllUsers = createAsyncThunk(
+  'superAdmin/fetchAllUsers',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) return rejectWithValue(error.message);
+      return (data ?? []).map((p: Record<string, unknown>) => ({
+        id:                p.id                  as string,
+        email:             p.email               as string,
+        companyName:       p.company_name         as string,
+        companyDomain:     p.company_domain       as string,
+        role:              p.role                 as string,
+        isFirstDomainUser: p.is_first_domain_user as boolean,
+        createdAt:         p.created_at           as string,
+      })) as UserProfile[];
+    } catch {
+      return rejectWithValue('Failed to fetch users');
+    }
+  }
+);
+
 const superAdminSlice = createSlice({
   name: 'superAdmin',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllCompanies.pending, (state) => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(fetchAllCompanies.fulfilled, (state, action) => {
-        state.status = 'success';
-        state.companies = action.payload;
-      })
-      .addCase(fetchAllCompanies.rejected, (state, action) => {
-        state.status = 'error';
-        state.error = action.payload as string;
-      })
+      .addCase(fetchAllCompanies.pending,  (state) => { state.status = 'loading'; state.error = null; })
+      .addCase(fetchAllCompanies.fulfilled,(state, action) => { state.status = 'success'; state.companies = action.payload; })
+      .addCase(fetchAllCompanies.rejected, (state, action) => { state.status = 'error'; state.error = action.payload as string; })
       .addCase(updateCompanyCredits.fulfilled, (state, action) => {
         const co = state.companies.find((c) => c.id === action.payload.companyId);
         if (co) co.credits = action.payload.credits;
-      });
+      })
+      .addCase(createCompany.fulfilled, (state, action) => {
+        state.companies.unshift(action.payload);
+      })
+      .addCase(fetchAllUsers.pending,  (state) => { state.usersStatus = 'loading'; })
+      .addCase(fetchAllUsers.fulfilled, (state, action) => { state.usersStatus = 'success'; state.users = action.payload; })
+      .addCase(fetchAllUsers.rejected, (state) => { state.usersStatus = 'error'; });
   },
 });
 
 export default superAdminSlice.reducer;
+
