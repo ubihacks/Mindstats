@@ -333,28 +333,7 @@ const LandingPage: React.FC = () => {
             viewport={{ once: true }}
             transition={mkT(0)}
           >
-            {/* Testimonial card */}
-            <Box
-              bg="rgba(255,255,255,0.08)" border="1px solid rgba(255,255,255,0.12)"
-              borderRadius="xl" px={{ base: 6, md: 10 }} py={8} mb={10}
-            >
-              <Text color="whiteAlpha.800" fontSize={{ base: 'md', md: 'lg' }} fontStyle="italic" lineHeight="1.85" mb={7}>
-                "Mindstat gave us behavioural clarity we never had before.
-                Our mis-hire rate dropped significantly in the first quarter of using it."
-              </Text>
-              <HStack justify="center" spacing={3}>
-                <Box
-                  w={9} h={9} bg="white" borderRadius="full" flexShrink={0}
-                  display="flex" alignItems="center" justifyContent="center"
-                >
-                  <Text fontSize="10px" fontWeight="800" color={NAVY} fontFamily="heading">SR</Text>
-                </Box>
-                <VStack align="start" spacing={0}>
-                  <Text fontSize="sm" fontWeight="700" color="white" fontFamily="heading">Sarah R.</Text>
-                  <Text fontSize="xs" color="whiteAlpha.600">Head of Talent Acquisition</Text>
-                </VStack>
-              </HStack>
-            </Box>
+         
 
             <Heading
               fontFamily="heading" fontSize={{ base: '2xl', md: '3xl' }}
