@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { supabase, supabaseAdmin } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
 import type { UIStatus } from '../../types';
 
 export interface CompanyOverview {
@@ -173,30 +173,11 @@ export const createUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      if (!supabaseAdmin) return rejectWithValue('VITE_SUPABASE_SERVICE_ROLE_KEY is not configured.');
-
-      const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.createUser({
-        email: payload.email,
-        password: payload.password,
-        email_confirm: true,
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: payload,
       });
-      if (authErr) return rejectWithValue(authErr.message);
-
-      const userId = authData.user.id;
-      const { data, error: profErr } = await supabaseAdmin
-        .from('profiles')
-        .upsert({
-          id:                  userId,
-          email:               payload.email,
-          company_name:        payload.companyName,
-          company_domain:      payload.companyDomain.trim().toLowerCase(),
-          role:                payload.role,
-          is_first_domain_user: false,
-        })
-        .select()
-        .single();
-      if (profErr) return rejectWithValue(profErr.message);
-
+      if (error) return rejectWithValue(error.message);
+      if (data?.error) return rejectWithValue(data.error);
       return {
         id:                data.id,
         email:             data.email,
