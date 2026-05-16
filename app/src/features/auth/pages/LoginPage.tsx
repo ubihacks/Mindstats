@@ -7,7 +7,7 @@
 import React, { useState } from 'react';
 import {
   Box, Button, Flex, FormControl, FormLabel, FormErrorMessage,
-  Heading, HStack, Icon, IconButton, Image, Input, InputGroup,
+  Heading, HStack, IconButton, Image, Input, InputGroup,
   InputRightElement, Link as ChakraLink, Text, VStack, Alert, AlertIcon,
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -15,30 +15,20 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { MdCheckCircle } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { loginUser, isCompanyEmail } from '../authSlice';
+import { loginUser } from '../authSlice';
 
 /* ── Design tokens (Desing.md + DESIGN.md) ───────────────────────────────── */
-const NAVY  = '#001e40';  // DESIGN.md primary
-const TEAL  = 'teal.300';
+const NAVY = '#001e40';  // DESIGN.md primary
 
 const schema = z.object({
   email: z
     .string()
-    .email('Invalid email address')
-    .refine(isCompanyEmail, 'Only professional company email addresses are allowed'),
+    .email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 type FormData = z.infer<typeof schema>;
-
-const FEATURES = [
-  'Match candidates to hiring manager DISC profiles',
-  'Gatekeeper workflow — HM completes first, always',
-  '28-question behavioural intelligence engine',
-  'Credit-based pricing with automatic link-expiry refunds',
-];
 
 /* ══════════════════════════════════════════════════════════════════════════ */
 
@@ -71,7 +61,7 @@ const LoginPage: React.FC = () => {
       <Flex
         display={{ base: 'none', lg: 'flex' }}
         flexDirection="column"
-        justifyContent="space-between"
+        justifyContent="center"
         w="46%"
         bg={NAVY}
         p={14}
@@ -92,21 +82,20 @@ const LoginPage: React.FC = () => {
           pointerEvents="none"
         />
 
-        {/* ── Logo ── */}
-        <Image
-          src="/mindstats-logo.svg"
-          h="24px"
-          filter="brightness(0) invert(1)"
-          alt="Mindstat"
-          zIndex={1}
-        />
+        <VStack align="start" spacing={10} zIndex={1}>
+          {/* ── Logo ── */}
+          <Image
+            src="/mindstats-logo.svg"
+            h="24px"
+            filter="brightness(0) invert(1)"
+            alt="Mindstat"
+          />
 
-        {/* ── Hero copy + feature list ── */}
-        <VStack align="start" spacing={9} zIndex={1}>
+          {/* ── Hero copy ── */}
           <Box>
             <Text
               fontSize="10px" fontWeight="700" letterSpacing="0.14em"
-              textTransform="uppercase" color={TEAL} mb={4}
+              textTransform="uppercase" color="teal.300" mb={4}
             >
               Behavioural Intelligence Platform
             </Text>
@@ -119,48 +108,28 @@ const LoginPage: React.FC = () => {
               letterSpacing="-0.03em"
             >
               Hire beyond the résumé.{' '}
-              <Box as="span" color={TEAL}>Match on behaviour.</Box>
+              <Box as="span" color="teal.300">Match on behaviour.</Box>
             </Heading>
           </Box>
 
-          <VStack align="start" spacing={3.5}>
-            {FEATURES.map((f) => (
-              <HStack key={f} spacing={3} align="start">
-                <Icon as={MdCheckCircle} color={TEAL} boxSize={4} mt={0.5} flexShrink={0} />
-                <Text fontSize="sm" color="whiteAlpha.800" lineHeight="1.65">{f}</Text>
-              </HStack>
-            ))}
-          </VStack>
+          {/* ── Stats row ── */}
+          <Box
+            w="full"
+            borderTop="1px solid"
+            borderColor="rgba(255,255,255,0.10)"
+            pt={8}
+          >
+            <HStack spacing={8}>
+              {([{ value: '500+', label: 'Companies' }, { value: '28', label: 'Questions' }, { value: '3', label: 'Dimensions' }] as const).map(({ value, label }) => (
+                <Box key={label}>
+                  <Text fontSize="2xl" fontWeight="800" color="white" lineHeight="1" fontFamily="heading">{value}</Text>
+                  <Text fontSize="xs" color="whiteAlpha.500" mt={1}>{label}</Text>
+                </Box>
+              ))}
+            </HStack>
+          </Box>
         </VStack>
 
-        {/* ── Testimonial ── */}
-        <Box
-          bg="rgba(255,255,255,0.07)"
-          border="1px solid rgba(255,255,255,0.11)"
-          borderRadius="xl"
-          px={5} py={4}
-          zIndex={1}
-        >
-          <Text
-            fontSize="sm" color="whiteAlpha.800"
-            fontStyle="italic" lineHeight="1.75" mb={4}
-          >
-            "Mindstat helped us cut mis-hires by surfacing behavioural patterns
-            no résumé could ever reveal."
-          </Text>
-          <HStack spacing={2.5}>
-            <Box
-              w={8} h={8} bg="teal.400" borderRadius="full"
-              display="flex" alignItems="center" justifyContent="center" flexShrink={0}
-            >
-              <Text fontSize="10px" fontWeight="800" color="white">SR</Text>
-            </Box>
-            <VStack align="start" spacing={0}>
-              <Text fontSize="xs" fontWeight="700" color="white">Sarah R.</Text>
-              <Text fontSize="10px" color="whiteAlpha.500">Head of Talent Acquisition</Text>
-            </VStack>
-          </HStack>
-        </Box>
       </Flex>
 
       {/* ═══════════════════════════════════════════════════════════════════
@@ -211,7 +180,7 @@ const LoginPage: React.FC = () => {
                 {/* Email */}
                 <FormControl isInvalid={!!errors.email}>
                   <FormLabel fontWeight="600" fontSize="sm" color="gray.700" mb={1.5}>
-                    Company Email
+                    Email
                   </FormLabel>
                   <Input
                     {...register('email')}
