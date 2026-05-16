@@ -64,7 +64,6 @@ const Sidebar: React.FC = () => {
       {/* Brand */}
       <Box mb={8} px={3} pt={1}>
         <HStack spacing={2} mb={0.5}>
-          <Image src="/mindstat-favicon.svg" h="30px" w="30px" alt="Mindstat icon" />
           <Image src="/mindstats-logo.svg" h="22px" filter="brightness(0) invert(1)" alt="Mindstat" />
         </HStack>
         <Text fontSize="xs" color="whiteAlpha.500" pl={0} letterSpacing="0.02em">

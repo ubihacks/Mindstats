@@ -1,71 +1,89 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
 
 const config: ThemeConfig = {
-  initialColorMode: 'light',
+  initialColorMode: 'dark',
   useSystemColorMode: false,
 };
 
-// ─── Insight Professional Design System ─────────────────────────────────────
-// Primary: Deep Navy  |  Secondary: Teal  |  Surface: Warm Off-White
-// Fonts: Montserrat (headings) + Inter (body)
+// ─── Mindstat — UI/UX Pro Max Skill ────────────────────────────────────────────
+// Style    : PocketOS.ai · Krisp.ai · Stripe · Vercel dark premium               
+// Pattern  : Dark aesthetic · Bento Grid · Glassmorphic 1px borders              
+// Typography: Plus Jakarta Sans (heading) + Inter (body)                          
+// Rule     : border="1px solid" borderColor="whiteAlpha.100" · no radius > xl   
 // ─────────────────────────────────────────────────────────────────────────────
 
 const colors = {
-  // Primary: Deep Navy — institutional trust & professional authority
+  // UI/UX Pro Skill: Deep premium dark layers (PocketOS / Vercel style)
+  dark: {
+    900: '#080808',  // ★ primary page background — deepest
+    850: '#0f0f0f',  // card / panel background
+    800: '#141414',  // elevated card / hover surface
+    700: '#1a1a1a',  // hover state / subtle bg
+    600: '#252525',  // divider / muted border
+    500: '#333333',  // muted interactive border
+  },
+
+  // Primary: Blue accent — visible on dark backgrounds
+  // Source: ui-ux-pro colors.csv #1 SaaS General (#2563EB primary)
   brand: {
-    50:  '#d5e3ff',  // primary-fixed — very light tint for badges/backgrounds
-    100: '#a7c8ff',  // inverse-primary — light blue for dark-bg accents
-    200: '#799dd6',  // on-primary-container
-    300: '#4d7bb0',
-    400: '#3a5f94',  // surface-tint — medium navy, icon accents on dark bg
-    500: '#2a4d7a',
-    600: '#1f477b',  // on-primary-fixed-variant
-    700: '#003366',  // primary-container → PRIMARY CTA BUTTON
-    800: '#001e40',  // primary → very dark navy (sidebar bg)
-    900: '#001020',  // deepest
+    50:  '#EFF6FF',  // lightest tint — badge backgrounds on white
+    100: '#DBEAFE',  // light — badge text bg on white
+    200: '#BFDBFE',  // medium-light
+    300: '#93C5FD',  // accent light — text on dark bg
+    400: '#60A5FA',  // interactive mid
+    500: '#3B82F6',  // primary interactive
+    600: '#2563EB',  // ★ PRIMARY CTA — ui-ux-pro SaaS primary
+    700: '#1D4ED8',  // CTA hover
+    800: '#1E3A8A',  // dark elements / sidebar
+    900: '#0F172A',  // ★ HERO BG — pure deep dark (ui-ux-pro B2B primary)
   },
 
-  // Secondary: Teal — interactive elements, focus states, success
+  // Accent: Teal — standard Tailwind, WCAG-safe success / focus states
   teal: {
-    50:  '#e8fafa',
-    100: '#93f2f2',  // secondary-fixed
-    200: '#76d6d5',  // secondary-fixed-dim
-    300: '#4dbfbf',
-    400: '#26a8a8',
-    500: '#008f8f',
-    600: '#006a6a',  // secondary — focus borders, active states, toggles
-    700: '#004f4f',  // on-secondary-fixed-variant
-    800: '#003838',
-    900: '#002020',  // on-secondary-fixed
+    50:  '#F0FDFA',
+    100: '#CCFBF1',
+    200: '#99F6E4',
+    300: '#5EEAD4',  // accent on dark backgrounds
+    400: '#2DD4BF',
+    500: '#14B8A6',
+    600: '#0D9488',  // focus borders / active toggles
+    700: '#0F766E',
+    800: '#115E59',
+    900: '#134E4A',
   },
 
-  // Neutral: Warm Gray — surfaces and text (replaces cool slate)
+  // Neutral: Standard Tailwind Slate — matches ui-ux-pro #F8FAFC bg & #E2E8F0 border
   slate: {
-    50:  '#fbf9f8',  // surface / page background
-    100: '#f5f3f3',  // surface-container-low
-    200: '#efeded',  // surface-container / card borders
-    300: '#e4e2e2',  // surface-container-highest / dividers
-    400: '#c3c6d1',  // outline-variant
-    500: '#737780',  // outline / secondary text
-    600: '#43474f',  // on-surface-variant
-    700: '#303031',  // inverse-surface
-    800: '#1b1c1c',  // on-surface / primary text
-    900: '#121212',  // deepest dark
+    50:  '#F8FAFC',  // ★ page background (ui-ux-pro SaaS bg)
+    100: '#F1F5F9',  // surface-container
+    200: '#E2E8F0',  // ★ card borders (ui-ux-pro SaaS border)
+    300: '#CBD5E1',  // dividers
+    400: '#94A3B8',  // placeholder text
+    500: '#64748B',  // secondary text
+    600: '#475569',  // body text variant
+    700: '#334155',  // body text
+    800: '#1E293B',  // ★ primary text (ui-ux-pro SaaS text)
+    900: '#0F172A',  // darkest
   },
 };
 
+// ui-ux-pro typography.csv #13: Plus Jakarta Sans — Friendly SaaS
+// "SaaS products, web apps, dashboards, B2B, productivity tools"
 const fonts = {
-  heading: `'Montserrat', 'Inter', system-ui, -apple-system, sans-serif`,
-  body:    `'Inter', system-ui, -apple-system, sans-serif`,
+  heading: `'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif`,
+  body:    `'Inter', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`,
   mono:    `'JetBrains Mono', 'Fira Code', 'Consolas', monospace`,
 };
 
 // Soft-glow elevation — avoids heavy drop shadows per spec
+// UI/UX Pro Skill: No heavy drop-shadows. 1px border depth instead.
+// Use only subtle glows for focus / hover illumination.
 const shadows = {
-  card:       '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px -1px rgba(0,0,0,0.03)',
-  'card-hover': '0 4px 20px rgba(0,0,0,0.05), 0 2px 8px -2px rgba(0,0,0,0.04)',
-  'card-focus': '0 0 0 3px rgba(0,106,106,0.20)',
-  'brand-glow': '0 0 20px rgba(0,51,102,0.18)',
+  card:         'none',
+  'card-hover': '0 0 0 1px rgba(255,255,255,0.08)',  // border-glow on hover
+  'card-focus': '0 0 0 2px rgba(96,165,250,0.40)',   // brand.400 focus ring
+  'brand-glow': '0 0 20px rgba(37,99,235,0.30)',
+  'teal-glow':  '0 0 20px rgba(20,184,166,0.28)',
 };
 
 // Rounded shape language — approachable yet professional
@@ -96,15 +114,15 @@ const components = {
     },
     variants: {
       solid: (props: any) => ({
-        bg:     props.colorScheme === 'brand' ? 'brand.700' : undefined,
+        bg:     props.colorScheme === 'brand' ? 'brand.600' : undefined,
         color:  props.colorScheme === 'brand' ? 'white'     : undefined,
         _hover: {
-          bg:        props.colorScheme === 'brand' ? 'brand.800' : undefined,
+          bg:        props.colorScheme === 'brand' ? 'brand.700' : undefined,
           transform: 'translateY(-1px)',
-          boxShadow: 'card-hover',
+          boxShadow: 'brand-glow',
         },
         _active: {
-          bg:        props.colorScheme === 'brand' ? 'brand.800' : undefined,
+          bg:        props.colorScheme === 'brand' ? 'brand.700' : undefined,
           transform: 'translateY(0)',
         },
         transition: 'all 0.15s ease',
@@ -124,7 +142,7 @@ const components = {
   },
 
   Input: {
-    defaultProps: { focusBorderColor: 'teal.600' },
+    defaultProps: { focusBorderColor: 'brand.600' },
     variants: {
       outline: {
         field: {
@@ -132,10 +150,10 @@ const components = {
           borderColor:  'slate.300',
           bg:           'white',
           fontSize:     'sm',
-          _hover:       { borderColor: 'slate.500' },
+          _hover:       { borderColor: 'slate.400' },
           _focus: {
-            borderColor: 'teal.600',
-            boxShadow:   '0 0 0 1px #006a6a',
+            borderColor: 'brand.600',
+            boxShadow:   '0 0 0 1px #2563EB',
           },
           _placeholder: { color: 'slate.400' },
         },
@@ -144,29 +162,29 @@ const components = {
   },
 
   Select: {
-    defaultProps: { focusBorderColor: 'teal.600' },
+    defaultProps: { focusBorderColor: 'brand.600' },
     variants: {
       outline: {
         field: {
           borderRadius: 'md',
           borderColor:  'slate.300',
           fontSize:     'sm',
-          _hover: { borderColor: 'slate.500' },
-          _focus: { borderColor: 'teal.600', boxShadow: '0 0 0 1px #006a6a' },
+          _hover: { borderColor: 'slate.400' },
+          _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px #2563EB' },
         },
       },
     },
   },
 
   Textarea: {
-    defaultProps: { focusBorderColor: 'teal.600' },
+    defaultProps: { focusBorderColor: 'brand.600' },
     variants: {
       outline: {
         borderRadius: 'md',
         borderColor:  'slate.300',
         fontSize:     'sm',
-        _hover:  { borderColor: 'slate.500' },
-        _focus: { borderColor: 'teal.600', boxShadow: '0 0 0 1px #006a6a' },
+        _hover:  { borderColor: 'slate.400' },
+        _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px #2563EB' },
       },
     },
   },
