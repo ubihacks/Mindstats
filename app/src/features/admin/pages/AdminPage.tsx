@@ -101,6 +101,7 @@ const AdminPage: React.FC = () => {
   };
 
   const roleConfig: Record<UserRole, { scheme: string; label: string }> = {
+    SUPER_ADMIN:    { scheme: 'red',    label: 'Super Admin' },
     ADMIN:          { scheme: 'purple', label: 'Admin' },
     HR:             { scheme: 'blue',   label: 'HR' },
     HIRING_MANAGER: { scheme: 'green',  label: 'Hiring Mgr' },

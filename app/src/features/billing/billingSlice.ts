@@ -142,6 +142,7 @@ const billingSlice = createSlice({
     builder
       .addCase(fetchBilling.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchBilling.fulfilled, (state, action) => {
+        if (!action.payload) return;
         state.currentPlan = action.payload.current_plan;
         state.paymentCycle = action.payload.payment_cycle;
         state.credits = action.payload.credits;
