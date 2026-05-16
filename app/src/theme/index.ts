@@ -147,15 +147,15 @@ const components = {
       outline: {
         field: {
           borderRadius: 'md',
-          borderColor:  'slate.300',
-          bg:           'white',
+          borderColor:  'whiteAlpha.200',
+          bg:           'dark.850',
           fontSize:     'sm',
-          _hover:       { borderColor: 'slate.400' },
+          _hover:       { borderColor: 'whiteAlpha.300' },
           _focus: {
             borderColor: 'brand.600',
-            boxShadow:   '0 0 0 1px #2563EB',
+            boxShadow:   '0 0 0 1px var(--chakra-colors-brand-600)',
           },
-          _placeholder: { color: 'slate.400' },
+          _placeholder: { color: 'whiteAlpha.400' },
         },
       },
     },
@@ -167,10 +167,10 @@ const components = {
       outline: {
         field: {
           borderRadius: 'md',
-          borderColor:  'slate.300',
+          borderColor:  'whiteAlpha.200',
           fontSize:     'sm',
-          _hover: { borderColor: 'slate.400' },
-          _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px #2563EB' },
+          _hover: { borderColor: 'whiteAlpha.300' },
+          _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
         },
       },
     },
@@ -181,10 +181,10 @@ const components = {
     variants: {
       outline: {
         borderRadius: 'md',
-        borderColor:  'slate.300',
+        borderColor:  'whiteAlpha.200',
         fontSize:     'sm',
-        _hover:  { borderColor: 'slate.400' },
-        _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px #2563EB' },
+        _hover:  { borderColor: 'whiteAlpha.300' },
+        _focus: { borderColor: 'brand.600', boxShadow: '0 0 0 1px var(--chakra-colors-brand-600)' },
       },
     },
   },
@@ -195,7 +195,7 @@ const components = {
       fontFamily:    'heading',
       letterSpacing: '-0.02em',
       fontWeight:    '700',
-      color:         'slate.800',
+      color:         'white',
     },
   },
 
@@ -215,7 +215,9 @@ const components = {
       dialog: {
         borderRadius: '2xl',
         boxShadow:    'xl',
-        bg:           'white',
+        bg:           'dark.850',
+        border:       '1px solid',
+        borderColor:  'whiteAlpha.100',
       },
       header: {
         fontFamily:    'heading',
@@ -223,7 +225,7 @@ const components = {
         fontSize:      'lg',
         letterSpacing: '-0.02em',
         pb:            3,
-        color:         'slate.800',
+        color:         'white',
       },
       overlay: {
         backdropFilter: 'blur(2px)',
@@ -241,16 +243,16 @@ const components = {
           fontWeight:    '700',
           textTransform: 'uppercase',
           letterSpacing: '0.06em',
-          color:         'slate.500',
-          borderColor:   'slate.200',
+          color:         'gray.400',
+          borderColor:   'whiteAlpha.100',
           py:            3,
-          bg:            'slate.50',
+          bg:            'dark.850',
         },
         td: {
-          borderColor: 'slate.100',
+          borderColor: 'whiteAlpha.100',
           py:          3.5,
           fontSize:    'sm',
-          color:       'slate.800',
+          color:       'gray.200',
         },
       },
     },
@@ -272,7 +274,7 @@ const components = {
     baseStyle: {
       fontWeight: '600',
       fontSize:   'sm',
-      color:      'slate.700',
+      color:      'gray.300',
       mb:         1.5,
       letterSpacing: '0.01em',
     },
@@ -282,7 +284,7 @@ const components = {
   Progress: {
     defaultProps: { colorScheme: 'teal' },
     baseStyle: {
-      track:     { borderRadius: 'full', bg: 'slate.200' },
+      track:     { borderRadius: 'full', bg: 'whiteAlpha.100' },
       filledTrack: { borderRadius: 'full' },
     },
   },
@@ -298,21 +300,21 @@ const theme = extendTheme({
   styles: {
     global: {
       'html, body': {
-        bg:                   'slate.50',  // warm off-white surface
-        color:                'slate.800',
+        bg:                   'dark.900',   // #080808 — deepest dark layer
+        color:                'whiteAlpha.900',
         WebkitFontSmoothing:  'antialiased',
         MozOsxFontSmoothing:  'grayscale',
         lineHeight:           '1.6',
       },
-      // Tonal separation — card borders use outline-variant
+      // Tonal separation — 1px razor-sharp white border (UI.md rule)
       '*': {
-        borderColor: 'slate.200',
+        borderColor: 'whiteAlpha.100',
       },
       // Refined scrollbar
       '::-webkit-scrollbar':        { width: '5px', height: '5px' },
       '::-webkit-scrollbar-track':  { bg: 'transparent' },
-      '::-webkit-scrollbar-thumb':  { bg: 'slate.300', borderRadius: 'full' },
-      '::-webkit-scrollbar-thumb:hover': { bg: 'slate.400' },
+      '::-webkit-scrollbar-thumb':  { bg: 'whiteAlpha.200', borderRadius: 'full' },
+      '::-webkit-scrollbar-thumb:hover': { bg: 'whiteAlpha.300' },
     },
   },
 });

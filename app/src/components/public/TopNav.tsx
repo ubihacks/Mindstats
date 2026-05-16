@@ -22,12 +22,14 @@ const TopNav: React.FC = () => {
   return (
     <Box
       as="nav"
-      bg="brand.800"
+      bg="rgba(8, 8, 8, 0.88)"
+      backdropFilter="blur(16px)"
+      sx={{ WebkitBackdropFilter: 'blur(16px)' }}
       position="sticky"
       top={0}
       zIndex={100}
       borderBottom="1px solid"
-      borderColor="whiteAlpha.100"
+      borderColor="whiteAlpha.80"
     >
       <Flex
         maxW="1280px"
@@ -75,11 +77,12 @@ const TopNav: React.FC = () => {
               as={RouterLink}
               to="/dashboard"
               size="sm"
-              bg="teal.600"
-              color="white"
+              bg="white"
+              color="gray.900"
               fontWeight="700"
               borderRadius="md"
-              _hover={{ bg: 'teal.700', transform: 'translateY(-1px)' }}
+              _hover={{ bg: 'gray.100', transform: 'translateY(-1px)' }}
+              _active={{ bg: 'gray.200', transform: 'translateY(0)' }}
               transition="all 0.15s"
             >
               Go to App
@@ -102,11 +105,12 @@ const TopNav: React.FC = () => {
                 as={RouterLink}
                 to="/register"
                 size="sm"
-                bg="teal.600"
-                color="white"
+                bg="white"
+                color="gray.900"
                 fontWeight="700"
                 borderRadius="md"
-                _hover={{ bg: 'teal.700', transform: 'translateY(-1px)' }}
+                _hover={{ bg: 'gray.100', transform: 'translateY(-1px)' }}
+                _active={{ bg: 'gray.200', transform: 'translateY(0)' }}
                 transition="all 0.15s"
               >
                 Get Started
@@ -131,7 +135,7 @@ const TopNav: React.FC = () => {
       {/* Mobile Drawer */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
-        <DrawerContent bg="brand.800">
+        <DrawerContent bg="#0f0f0f" borderLeft="1px solid" borderColor="whiteAlpha.100">
           <DrawerCloseButton color="white" />
           <DrawerBody pt={16}>
             <VStack spacing={2} align="stretch">
@@ -170,13 +174,13 @@ const TopNav: React.FC = () => {
                   <Button
                     as={RouterLink}
                     to="/register"
-                    bg="teal.600"
-                    color="white"
+                    bg="white"
+                    color="gray.900"
                     fontWeight="700"
                     w="full"
                     mt={2}
                     onClick={onClose}
-                    _hover={{ bg: 'teal.700' }}
+                    _hover={{ bg: 'gray.100' }}
                     borderRadius="md"
                   >
                     Get Started

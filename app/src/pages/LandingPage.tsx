@@ -13,20 +13,18 @@ import React, { useEffect } from 'react';
 import {
   Box, Button, Container, Divider, Flex, Grid,
   Heading, HStack, Icon, Image,
-  SimpleGrid, Text, VStack,
+  Text, VStack,
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import {
-  MdTrendingUp, MdInsights, MdWorkspaces, MdPsychology,
-  MdVerified, MdGroups,
+  MdPsychology, MdVerified, MdGroups,
 } from 'react-icons/md';
 import { useAppSelector } from '../app/hooks';
 
 // ── Motion primitives ─────────────────────────────────────────────────────────
-const MotionBox  = motion(Box);
-const MotionFlex = motion(Flex);
+const MotionBox = motion(Box);
 
 // ── Skill §1-C: duration 0.2s ease-out — cubic-bezier array (TS-safe) ────────
 const EASE_OUT = [0.0, 0.0, 0.2, 1] as [number, number, number, number];
@@ -64,12 +62,6 @@ const BEHAVIOUR_CARDS = [
     src:         '/perceived-behaviour.jpg',
     icon:        MdVerified,
   },
-];
-
-const STATS = [
-  { value: '85%', label: 'lack true self-awareness',        icon: MdInsights   },
-  { value: '3×',  label: 'lower mis-hire with DISC hiring', icon: MdTrendingUp },
-  { value: '28',  label: 'force-choice questions',          icon: MdWorkspaces },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -207,39 +199,6 @@ const LandingPage: React.FC = () => {
             </MotionBox>
 
           </Flex>
-        </Container>
-      </Box>
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          STATS ROW — #0f0f0f · glass icon tiles · no heavy shadow
-          Skill §1-A: secondary card bg = #121212 area
-      ═══════════════════════════════════════════════════════════════════ */}
-      <Box bg="#0f0f0f" borderBottom="1px solid" borderColor="whiteAlpha.60" py={10}>
-        <Container maxW="1280px" px={{ base: 5, md: 10 }}>
-          <SimpleGrid columns={{ base: 1, sm: 3 }} gap={0}>
-            {STATS.map((s, i) => (
-              <MotionFlex
-                key={s.label}
-                align="center" gap={4} justify="center"
-                initial={prefersReduced ? false : { opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={mkT(i * 0.06)}
-                px={8} py={4}
-                borderRight={i < STATS.length - 1 ? { sm: '1px solid' } : undefined}
-                borderColor="whiteAlpha.80"
-              >
-                <Box {...GLASS} p={3} flexShrink={0} borderRadius="lg">
-                  <Icon as={s.icon} boxSize={5} color="brand.400" />
-                </Box>
-                <Box>
-                  <Text fontFamily="heading" fontSize="2xl" fontWeight="800" color="white" letterSpacing="-0.04em" lineHeight="1">
-                    {s.value}
-                  </Text>
-                  <Text fontSize="xs" color="gray.400" mt={1} fontWeight="500">{s.label}</Text>
-                </Box>
-              </MotionFlex>
-            ))}
-          </SimpleGrid>
         </Container>
       </Box>
 

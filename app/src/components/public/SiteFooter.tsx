@@ -21,7 +21,7 @@ const LEGAL_LINKS = [
 ];
 
 const SiteFooter: React.FC = () => (
-  <Box as="footer" bg="brand.800" color="white" role="contentinfo">
+  <Box as="footer" bg="#080808" color="white" borderTop="1px solid" borderColor="whiteAlpha.80" role="contentinfo">
     <Container maxW="1280px" px={{ base: 5, md: 8 }}>
       {/* Main footer grid */}
       <Flex
