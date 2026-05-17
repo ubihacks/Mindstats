@@ -22,12 +22,13 @@ const InvitePage: React.FC = () => {
   const { token }  = useParams<{ token: string }>();
   const navigate   = useNavigate();
 
-  const [status, setStatus]             = useState<PageStatus>('loading');
+  const [status, setStatus]               = useState<PageStatus>('loading');
   const [candidateName, setCandidateName] = useState('');
-  const [roleTitle, setRoleTitle]       = useState('');
-  const [roleId, setRoleId]             = useState('');
-  const [reportUrl, setReportUrl]       = useState<string | null>(null);
-  const [discScores, setDiscScores]     = useState<DiscScores | null>(null);
+  const [roleTitle, setRoleTitle]         = useState('');
+  const [roleId, setRoleId]               = useState('');
+  const [reportUrl, setReportUrl]         = useState<string | null>(null);
+  const [discScores, setDiscScores]       = useState<DiscScores | null>(null);
+  const [debugError, setDebugError]       = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -45,11 +46,13 @@ const InvitePage: React.FC = () => {
 
       if (error) {
         console.error('[InvitePage] candidates query error:', error);
+        setDebugError(`DB error: ${error.message} (code: ${error.code})`);
         setStatus('invalid');
         return;
       }
       if (!data) {
         console.warn('[InvitePage] no candidate found for token:', token);
+        setDebugError(`No row found for token: ${token}`);
         setStatus('invalid');
         return;
       }
@@ -271,6 +274,11 @@ const InvitePage: React.FC = () => {
               <AlertIcon />
               <Text fontSize="sm">This invite link is invalid.</Text>
             </Alert>
+            {debugError && (
+              <Box bg="gray.50" borderRadius="lg" p={3} w="full" textAlign="left">
+                <Text fontSize="10px" color="gray.400" fontFamily="mono" wordBreak="break-all">{debugError}</Text>
+              </Box>
+            )}
           </VStack>
         )}
       </Box>
