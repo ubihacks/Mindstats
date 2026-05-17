@@ -3,14 +3,16 @@ import {
   Box, Heading, Text, VStack, HStack, Flex, Badge, Button, Avatar,
   Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tag, Icon,
   Divider, SimpleGrid, Skeleton, Tooltip, useDisclosure, IconButton,
-  useToast, InputGroup, InputRightElement, Input,
+  useToast, InputGroup, InputRightElement, Input, Popover,
+  PopoverTrigger, PopoverContent, PopoverBody, PopoverArrow,
 } from '@chakra-ui/react';
 import {
-  ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon,
+  ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon,
 } from '@chakra-ui/icons';
 import { MdWork, MdPeople, MdCheckCircle, MdPending, MdTimer } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAppSelector } from '../../../app/hooks';
+import { useAppSelector, useAppDispatch } from '../../../app/hooks';
+import { deleteCandidate } from '../rolesSlice';
 import InviteCandidateModal from '../components/InviteCandidateModal';
 import type { Candidate } from '../../../types';
 
@@ -76,13 +78,29 @@ const CopyLink: React.FC<{ token: string }> = ({ token }) => {
 const RoleDetailPage: React.FC = () => {
   const { roleId } = useParams<{ roleId: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const toast = useToast();
   const { roles, status } = useAppSelector((s) => s.roles);
+  const { user } = useAppSelector((s) => s.auth);
   const candidateModal = useDisclosure();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const role = roles.find((r) => r.id === roleId);
   const isLoading = status === 'loading' && !role;
 
   const hmStatus = HM_STATUS[role?.hiringManagerStatus ?? 'IDLE'];
+
+  const handleDelete = async (candidateId: string) => {
+    if (!role || !user) return;
+    setDeletingId(candidateId);
+    const result = await dispatch(deleteCandidate({ candidateId, roleId: role.id, companyId: user.id }));
+    setDeletingId(null);
+    if (deleteCandidate.fulfilled.match(result)) {
+      toast({ title: 'Invite deleted', description: '1 credit has been refunded.', status: 'success', position: 'top', duration: 3000 });
+    } else {
+      toast({ title: 'Delete failed', description: result.payload as string, status: 'error', position: 'top', duration: 4000 });
+    }
+  };
 
   const pending   = role?.candidates.filter((c) => c.inviteStatus === 'PENDING').length ?? 0;
   const completed = role?.candidates.filter((c) => c.inviteStatus === 'COMPLETED').length ?? 0;
@@ -203,6 +221,7 @@ const RoleDetailPage: React.FC = () => {
                         <Th fontSize="10px" color="gray.500">Invited</Th>
                         <Th fontSize="10px" color="gray.500">Expires</Th>
                         <Th fontSize="10px" color="gray.500">Invite Link</Th>
+                        <Th w={10} />
                       </Tr>
                     </Thead>
                     <Tbody>
@@ -246,6 +265,38 @@ const RoleDetailPage: React.FC = () => {
                                 ? <CopyLink token={c.inviteToken} />
                                 : <Text fontSize="xs" color="gray.300">—</Text>
                               }
+                            </Td>
+                            <Td>
+                              {c.inviteStatus === 'PENDING' && !isExpired && (
+                                <Popover placement="left">
+                                  <PopoverTrigger>
+                                    <Tooltip label="Delete invite" hasArrow>
+                                      <IconButton
+                                        aria-label="Delete invite"
+                                        icon={<DeleteIcon />}
+                                        size="xs" variant="ghost" color="red.400"
+                                        isLoading={deletingId === c.id}
+                                        _hover={{ bg: 'red.50', color: 'red.600' }}
+                                      />
+                                    </Tooltip>
+                                  </PopoverTrigger>
+                                  <PopoverContent w="220px" boxShadow="lg">
+                                    <PopoverArrow />
+                                    <PopoverBody p={4}>
+                                      <Text fontSize="xs" fontWeight="700" color="gray.700" mb={1}>Delete this invite?</Text>
+                                      <Text fontSize="xs" color="gray.500" mb={3}>1 credit will be refunded to your pool.</Text>
+                                      <HStack spacing={2}>
+                                        <Button size="xs" colorScheme="red" fontWeight="700"
+                                          isLoading={deletingId === c.id}
+                                          onClick={() => handleDelete(c.id)}>
+                                          Delete
+                                        </Button>
+                                        <Button size="xs" variant="ghost">Cancel</Button>
+                                      </HStack>
+                                    </PopoverBody>
+                                  </PopoverContent>
+                                </Popover>
+                              )}
                             </Td>
                           </Tr>
                         );

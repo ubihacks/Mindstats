@@ -221,6 +221,34 @@ export const inviteCandidate = createAsyncThunk(
   }
 );
 
+export const deleteCandidate = createAsyncThunk(
+  'roles/deleteCandidate',
+  async (
+    payload: { candidateId: string; roleId: string; companyId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { error } = await supabase
+        .from('candidates')
+        .delete()
+        .eq('id', payload.candidateId)
+        .eq('invite_status', 'PENDING'); // Safety: only delete pending invites
+
+      if (error) return rejectWithValue(error.message);
+
+      // Refund 1 credit back to the company pool
+      const company = await getCompany(payload.companyId);
+      if (company) {
+        await refundCredit(company.domain, company.credits);
+      }
+
+      return { candidateId: payload.candidateId, roleId: payload.roleId };
+    } catch (err: unknown) {
+      return rejectWithValue('Failed to delete invite');
+    }
+  }
+);
+
 export const refundExpiredCredits = createAsyncThunk(
   'roles/refundExpiredCredits',
   async (companyId: string, { rejectWithValue }) => {
@@ -311,6 +339,14 @@ const rolesSlice = createSlice({
       .addCase(inviteCandidate.fulfilled, (state, action) => {
         const role = state.roles.find((r) => r.id === action.payload.roleId);
         if (role) role.candidates.push(action.payload.candidate);
+      });
+
+    builder
+      .addCase(deleteCandidate.fulfilled, (state, action) => {
+        const role = state.roles.find((r) => r.id === action.payload.roleId);
+        if (role) {
+          role.candidates = role.candidates.filter((c) => c.id !== action.payload.candidateId);
+        }
       });
   },
 });
