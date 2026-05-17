@@ -84,7 +84,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 Most
               </Button>
 
-              {/* Least — navy outline when selected */}
+              {/* Least — same style as Most */}
               <Button
                 size="sm"
                 borderRadius="full"
@@ -95,10 +95,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 letterSpacing="0.04em"
                 border="1px solid"
                 onClick={() => onLeastSelect(option.id)}
-                bg={isLeast ? '#f3f3f4' : 'transparent'}
-                color={isLeast ? NAVY : 'gray.500'}
+                bg={isLeast ? NAVY : 'transparent'}
+                color={isLeast ? 'white' : 'gray.500'}
                 borderColor={isLeast ? NAVY : '#DADADA'}
-                _hover={{ bg: MINT, borderColor: NAVY, color: NAVY }}
+                _hover={{ bg: isLeast ? '#002952' : MINT, borderColor: NAVY, color: isLeast ? 'white' : NAVY }}
                 _active={{ transform: 'scale(0.96)' }}
                 transition="all 0.15s ease-out"
               >
