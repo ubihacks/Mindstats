@@ -67,6 +67,7 @@ function mapRole(r: any): HiringRole {
       expiresAt: c.expires_at,
       reportUrl: c.report_url ?? null,
       shareReportWithCandidate: c.share_report_with_candidate,
+      discScores: c.disc_scores ?? null,
     })),
   };
 }

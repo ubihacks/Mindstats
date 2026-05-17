@@ -76,6 +76,7 @@ const AssessmentPage: React.FC = () => {
           assessmentType: type,
           disc,
           totalAnswered: Object.keys(answers).length,
+          answers: Object.values(answers),
         },
       });
     }

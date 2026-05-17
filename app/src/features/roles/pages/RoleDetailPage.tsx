@@ -10,21 +10,28 @@ import {
   AlertDialogContent, AlertDialogOverlay,
 } from '@chakra-ui/react';
 import {
-  ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon,
+  ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon, RepeatIcon, DownloadIcon,
 } from '@chakra-ui/icons';
 import { MdWork, MdPeople, MdCheckCircle, MdPending, MdTimer } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import { deleteCandidate } from '../rolesSlice';
+import { deleteCandidate, fetchRoles } from '../rolesSlice';
 import InviteCandidateModal from '../components/InviteCandidateModal';
 import type { Candidate } from '../../../types';
 
 const NAVY = '#001e40';
 
 const STATUS_CONFIG: Record<string, { colorScheme: string; label: string; icon: React.ElementType }> = {
-  PENDING:   { colorScheme: 'orange', label: 'Pending',   icon: MdTimer       },
-  COMPLETED: { colorScheme: 'green',  label: 'Completed', icon: MdCheckCircle },
-  EXPIRED:   { colorScheme: 'red',    label: 'Expired',   icon: MdPending     },
+  PENDING:   { colorScheme: 'orange', label: 'Awaiting Assessment', icon: MdTimer       },
+  COMPLETED: { colorScheme: 'green',  label: 'Assessment Complete', icon: MdCheckCircle },
+  EXPIRED:   { colorScheme: 'red',    label: 'Link Expired',        icon: MdPending     },
+};
+
+const DISC_COLOR: Record<string, string> = {
+  D: '#E53E3E', I: '#D69E2E', S: '#38A169', C: '#3182CE',
+};
+const DISC_LABEL: Record<string, string> = {
+  D: 'Dominance', I: 'Influence', S: 'Steadiness', C: 'Conscientiousness',
 };
 
 const HM_STATUS: Record<string, { colorScheme: string; label: string }> = {
@@ -87,6 +94,7 @@ const RoleDetailPage: React.FC = () => {
   const { user } = useAppSelector((s) => s.auth);
   const candidateModal = useDisclosure();
   const [deletingId, setDeletingId]     = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [confirmCandidate, setConfirmCandidate] = useState<Candidate | null>(null);
   const deleteDialog = useDisclosure();
   const cancelRef    = useRef<HTMLButtonElement>(null);
@@ -100,6 +108,58 @@ const RoleDetailPage: React.FC = () => {
   const isLoading = status === 'loading' && !role;
 
   const hmStatus = HM_STATUS[role?.hiringManagerStatus ?? 'IDLE'];
+
+  const handleDownloadResponses = async (c: Candidate) => {
+    if (!role) return;
+    setDownloadingId(c.id);
+    try {
+      const { data, error } = await (await import('../../../lib/supabaseClient')).supabase
+        .from('assessment_responses')
+        .select('answers, submitted_at')
+        .eq('role_id', role.id)
+        .eq('respondent_id', c.inviteToken)
+        .eq('assessment_type', 'CANDIDATE')
+        .order('submitted_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) {
+        toast({ title: 'No responses found', status: 'warning', position: 'top', duration: 3000 });
+        return;
+      }
+
+      const { DISC_QUESTIONS } = await import('../../assessment/data/questions');
+      const traitMap: Record<string, string> = { a: 'D (Dominance)', b: 'I (Influence)', c: 'S (Steadiness)', d: 'C (Conscientiousness)' };
+      const answers: any[] = typeof data.answers === 'string' ? JSON.parse(data.answers) : data.answers;
+      const escape = (s = '') => `"${String(s).replace(/"/g, '""')}"`;
+
+      const rows = [
+        ['Q#', 'Topic', 'Most — Text', 'Most — Trait', 'Least — Text', 'Least — Trait'].join(','),
+        [`Candidate: ${c.name}`, `Email: ${c.email}`, `Submitted: ${new Date(data.submitted_at).toLocaleString()}`, '', '', ''].join(','),
+        ...answers.map((ans: any) => {
+          const q = DISC_QUESTIONS.find((q) => q.id === ans.questionId);
+          if (!q) return '';
+          const mostOpt  = q.options.find((o) => o.id === ans.mostOptionId);
+          const leastOpt = q.options.find((o) => o.id === ans.leastOptionId);
+          return [
+            q.id, escape(q.title),
+            escape(mostOpt?.text),  traitMap[ans.mostOptionId?.slice(-1)  ?? ''] ?? '',
+            escape(leastOpt?.text), traitMap[ans.leastOptionId?.slice(-1) ?? ''] ?? '',
+          ].join(',');
+        }).filter(Boolean),
+      ];
+
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `disc-responses-${c.name.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const handleDelete = async (candidateId: string) => {
     if (!role || !user) return;
@@ -212,6 +272,16 @@ const RoleDetailPage: React.FC = () => {
                   {role!.candidates.length} candidate{role!.candidates.length !== 1 ? 's' : ''} invited
                 </Text>
               </Box>
+              <Tooltip label="Refresh candidate statuses" hasArrow>
+                <IconButton
+                  aria-label="Refresh"
+                  icon={<RepeatIcon />}
+                  size="sm" variant="ghost" color="gray.500"
+                  isLoading={status === 'loading'}
+                  onClick={() => user && dispatch(fetchRoles(user.id))}
+                  _hover={{ bg: 'gray.100', color: NAVY }}
+                />
+              </Tooltip>
             </Flex>
 
             {role!.candidates.length === 0 ? (
@@ -230,8 +300,9 @@ const RoleDetailPage: React.FC = () => {
                     <Thead bg="gray.50">
                       <Tr>
                         <Th fontSize="10px" color="gray.500" py={3}>Candidate</Th>
-                        <Th fontSize="10px" color="gray.500">Status</Th>
-                        <Th fontSize="10px" color="gray.500">Invited</Th>
+                        <Th fontSize="10px" color="gray.500">Assessment</Th>
+                        <Th fontSize="10px" color="gray.500">DISC Profile</Th>
+                        <Th fontSize="10px" color="gray.500">Report</Th>
                         <Th fontSize="10px" color="gray.500">Expires</Th>
                         <Th fontSize="10px" color="gray.500">Invite Link</Th>
                         <Th w={10} />
@@ -252,22 +323,60 @@ const RoleDetailPage: React.FC = () => {
                                 </Box>
                               </HStack>
                             </Td>
+                            {/* Assessment status */}
                             <Td>
                               <Badge
                                 colorScheme={isExpired && c.inviteStatus !== 'COMPLETED' ? 'red' : st.colorScheme}
-                                borderRadius="full" px={2} fontSize="10px" fontWeight="700"
+                                borderRadius="full" px={2.5} py={0.5} fontSize="10px" fontWeight="700"
                               >
                                 <HStack spacing={1}>
                                   <Icon as={isExpired && c.inviteStatus !== 'COMPLETED' ? MdTimer : st.icon} boxSize={2.5} />
-                                  <Text>{isExpired && c.inviteStatus !== 'COMPLETED' ? 'Expired' : st.label}</Text>
+                                  <Text>{isExpired && c.inviteStatus !== 'COMPLETED' ? 'Link Expired' : st.label}</Text>
                                 </HStack>
                               </Badge>
                             </Td>
+
+                            {/* DISC primary trait */}
                             <Td>
-                              <Text fontSize="xs" color="gray.500">
-                                {new Date(c.invitedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                              </Text>
+                              {c.discScores ? (() => {
+                                const primary = (Object.entries(c.discScores) as [string, number][]).sort((a, b) => b[1] - a[1])[0][0];
+                                return (
+                                  <Tooltip label={DISC_LABEL[primary]} hasArrow>
+                                    <HStack spacing={1.5} display="inline-flex">
+                                      <Box
+                                        w="20px" h="20px" borderRadius="md" flexShrink={0}
+                                        bg={DISC_COLOR[primary]} color="white"
+                                        display="flex" alignItems="center" justifyContent="center"
+                                        fontSize="10px" fontWeight="800"
+                                      >
+                                        {primary}
+                                      </Box>
+                                      <Text fontSize="xs" fontWeight="600" color="gray.600">{DISC_LABEL[primary]}</Text>
+                                    </HStack>
+                                  </Tooltip>
+                                );
+                              })() : (
+                                <Text fontSize="xs" color="gray.300">—</Text>
+                              )}
                             </Td>
+
+                            {/* Report status */}
+                            <Td>
+                              {c.inviteStatus === 'COMPLETED' ? (
+                                c.reportUrl ? (
+                                  <Badge colorScheme="green" borderRadius="full" px={2.5} fontSize="10px" fontWeight="700">
+                                    Uploaded
+                                  </Badge>
+                                ) : (
+                                  <Badge colorScheme="gray" borderRadius="full" px={2.5} fontSize="10px" fontWeight="700">
+                                    Pending Review
+                                  </Badge>
+                                )
+                              ) : (
+                                <Text fontSize="xs" color="gray.300">—</Text>
+                              )}
+                            </Td>
+
                             <Td>
                               <Text fontSize="xs" color={isExpired ? 'red.400' : 'gray.500'}>
                                 {new Date(c.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -280,18 +389,32 @@ const RoleDetailPage: React.FC = () => {
                               }
                             </Td>
                             <Td>
-                              {c.inviteStatus === 'PENDING' && !isExpired && (
-                                <Tooltip label="Delete invite" hasArrow>
-                                  <IconButton
-                                    aria-label="Delete invite"
-                                    icon={<DeleteIcon />}
-                                    size="xs" variant="ghost" color="red.400"
-                                    isLoading={deletingId === c.id}
-                                    _hover={{ bg: 'red.50', color: 'red.600' }}
-                                    onClick={() => openDeleteConfirm(c)}
-                                  />
-                                </Tooltip>
-                              )}
+                              <HStack spacing={1}>
+                                {c.inviteStatus === 'COMPLETED' && (
+                                  <Tooltip label="Download assessment responses (CSV)" hasArrow>
+                                    <IconButton
+                                      aria-label="Download responses"
+                                      icon={<DownloadIcon />}
+                                      size="xs" variant="ghost" color="blue.400"
+                                      isLoading={downloadingId === c.id}
+                                      _hover={{ bg: 'blue.50', color: 'blue.600' }}
+                                      onClick={() => handleDownloadResponses(c)}
+                                    />
+                                  </Tooltip>
+                                )}
+                                {c.inviteStatus === 'PENDING' && !isExpired && (
+                                  <Tooltip label="Delete invite" hasArrow>
+                                    <IconButton
+                                      aria-label="Delete invite"
+                                      icon={<DeleteIcon />}
+                                      size="xs" variant="ghost" color="red.400"
+                                      isLoading={deletingId === c.id}
+                                      _hover={{ bg: 'red.50', color: 'red.600' }}
+                                      onClick={() => openDeleteConfirm(c)}
+                                    />
+                                  </Tooltip>
+                                )}
+                              </HStack>
                             </Td>
                           </Tr>
                         );
