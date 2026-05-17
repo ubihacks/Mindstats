@@ -50,17 +50,6 @@ const RolesPage: React.FC = () => {
   };
 
   const handleOpenCandidateModal = (role: HiringRole) => {
-    if (role.hiringManagerStatus !== 'COMPLETED') {
-      toast({
-        title: 'Gatekeeper: Action Locked',
-        description: 'Hiring Manager must complete their assessment before inviting candidates.',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'top',
-      });
-      return;
-    }
     setActiveRole(role);
     candidateModal.onOpen();
   };
@@ -166,7 +155,7 @@ const RolesPage: React.FC = () => {
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
           {roles.map((role, idx) => {
             const sc = statusConfig[role.hiringManagerStatus] ?? statusConfig['IDLE'];
-            const isUnlocked = role.hiringManagerStatus !== 'IDLE'; // unlocks once HM is invited
+            const isUnlocked = true; // Gatekeeper temporarily disabled
             const hmInvited = role.hiringManagerStatus !== 'IDLE';
 
             return (
@@ -318,27 +307,19 @@ const RolesPage: React.FC = () => {
                         {hmInvited ? '✓ HM Invited' : 'Invite Hiring Manager'}
                       </Button>
 
-                      <Tooltip
-                        label={!isUnlocked ? '🔒 HM must complete assessment first' : ''}
-                        hasArrow
-                        isDisabled={isUnlocked}
-                      >
-                        <Button
+                      <Button
                           size="sm"
                           w="full"
-                          bg={isUnlocked ? 'green.500' : 'slate.100'}
-                          color={isUnlocked ? 'white' : 'slate.400'}
-                          leftIcon={isUnlocked ? <UnlockIcon boxSize={3} /> : <LockIcon boxSize={3} />}
+                          bg="green.500"
+                          color="white"
+                          leftIcon={<UnlockIcon boxSize={3} />}
                           onClick={() => handleOpenCandidateModal(role)}
-                          isDisabled={!isUnlocked}
                           fontWeight="600"
-                          _hover={{ bg: isUnlocked ? 'green.600' : 'slate.100', transform: isUnlocked ? 'translateY(-1px)' : 'none' }}
-                          _disabled={{ opacity: 0.6, cursor: 'not-allowed' }}
+                          _hover={{ bg: 'green.600', transform: 'translateY(-1px)' }}
                           transition="all 0.15s"
                         >
-                          {isUnlocked ? 'Invite Candidate' : 'Candidate Invite Locked'}
+                          Invite Candidate
                         </Button>
-                      </Tooltip>
                     </VStack>
                   )}
                 </Box>
