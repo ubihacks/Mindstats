@@ -16,11 +16,26 @@ export const submitAssessment = createAsyncThunk(
       const state = getState() as { assessment: AssessmentState };
       const answers = Object.values(state.assessment.answers);
 
+      // Calculate DISC scores (a=D, b=I, c=S, d=C)
+      const traitMap: Record<string, 'D' | 'I' | 'S' | 'C'> = { a: 'D', b: 'I', c: 'S', d: 'C' };
+      const discScores = { D: 0, I: 0, S: 0, C: 0 };
+      answers.forEach((a) => {
+        if (a.mostOptionId) {
+          const t = traitMap[a.mostOptionId.slice(-1)];
+          if (t) discScores[t] += 2;
+        }
+        if (a.leastOptionId) {
+          const t = traitMap[a.leastOptionId.slice(-1)];
+          if (t) discScores[t] -= 1;
+        }
+      });
+
       const { error } = await supabase.from('assessment_responses').insert({
         role_id: payload.roleId,
         respondent_id: payload.respondentId,
         assessment_type: payload.assessmentType,
         answers: JSON.stringify(answers),
+        disc_scores: discScores,
         submitted_at: new Date().toISOString(),
       });
 
@@ -38,7 +53,7 @@ export const submitAssessment = createAsyncThunk(
 
       if (payload.assessmentType === 'CANDIDATE') {
         // Update by invite_token if available (candidate without auth), else by respondent id
-        const query = supabase.from('candidates').update({ invite_status: 'COMPLETED' });
+        const query = supabase.from('candidates').update({ invite_status: 'COMPLETED', disc_scores: discScores });
         const { error: candidateError } = payload.inviteToken
           ? await query.eq('invite_token', payload.inviteToken)
           : await query.eq('id', payload.respondentId);

@@ -76,6 +76,8 @@ export interface HiringRole {
   createdAt: string;
 }
 
+export interface DiscScores { D: number; I: number; S: number; C: number }
+
 export interface Candidate {
   id: string;
   name: string;
@@ -86,6 +88,7 @@ export interface Candidate {
   expiresAt: string;
   reportUrl: string | null;
   shareReportWithCandidate: boolean;
+  discScores?: DiscScores | null;
 }
 
 export interface RolesState {
@@ -130,8 +133,22 @@ export interface Report {
   uploadedBy: string;
 }
 
+export interface AssessmentResult {
+  id: string;
+  roleId: string;
+  respondentId: string;
+  assessmentType: 'HIRING_MANAGER' | 'CANDIDATE';
+  discScores: DiscScores | null;
+  submittedAt: string;
+  candidateName?: string;
+  candidateEmail?: string;
+  roleTitle?: string;
+}
+
 export interface ReportsState {
   reports: Report[];
+  assessmentResults: AssessmentResult[];
+  resultsStatus: UIStatus;
   status: UIStatus;
   error: string | null;
 }

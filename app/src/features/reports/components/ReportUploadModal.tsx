@@ -25,6 +25,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   roles: HiringRole[];
+  preselectedResultId?: string | null;
 }
 
 const ReportUploadModal: React.FC<Props> = ({ isOpen, onClose, roles }) => {
@@ -65,6 +66,8 @@ const ReportUploadModal: React.FC<Props> = ({ isOpen, onClose, roles }) => {
       toast({ title: 'Please select a file', status: 'warning', position: 'top' });
       return;
     }
+    const role = roles.find((r) => r.id === data.roleId);
+    const candidate = role?.candidates.find((c) => c.id === data.candidateId);
     const result = await dispatch(
       uploadReport({
         file: selectedFile,
@@ -72,6 +75,7 @@ const ReportUploadModal: React.FC<Props> = ({ isOpen, onClose, roles }) => {
         candidateId: data.candidateId ?? null,
         companyId: user.id,
         uploadedBy: user.email,
+        shareWithCandidate: candidate?.shareReportWithCandidate ?? false,
       })
     );
     if (uploadReport.fulfilled.match(result)) {

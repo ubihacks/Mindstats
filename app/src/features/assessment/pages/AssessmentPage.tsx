@@ -43,10 +43,29 @@ const AssessmentPage: React.FC = () => {
 
   useEffect(() => {
     if (submittedAt) {
+      // Compute DISC scores before resetting (a=D, b=I, c=S, d=C)
+      const disc = { D: 0, I: 0, S: 0, C: 0 };
+      const traitMap: Record<string, keyof typeof disc> = { a: 'D', b: 'I', c: 'S', d: 'C' };
+      Object.values(answers).forEach((a) => {
+        if (a.mostOptionId) {
+          const t = traitMap[a.mostOptionId.slice(-1)];
+          if (t) disc[t] += 2;
+        }
+        if (a.leastOptionId) {
+          const t = traitMap[a.leastOptionId.slice(-1)];
+          if (t) disc[t] -= 1;
+        }
+      });
       dispatch(resetAssessment());
-      navigate('/assessment/complete');
+      navigate('/assessment/complete', {
+        state: {
+          assessmentType: type,
+          disc,
+          totalAnswered: Object.keys(answers).length,
+        },
+      });
     }
-  }, [submittedAt, dispatch, navigate]);
+  }, [submittedAt, dispatch, navigate, answers, type]);
 
   const handleSubmit = () => {
     if (!allComplete || !roleId) return;
