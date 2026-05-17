@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box, Heading, Text, VStack, HStack, Flex, Badge, Button, Avatar,
   Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tag, Icon,
   Divider, SimpleGrid, Skeleton, Tooltip, useDisclosure, IconButton,
-  useToast, InputGroup, InputRightElement, Input, Popover,
-  PopoverTrigger, PopoverContent, PopoverBody, PopoverArrow,
+  useToast, InputGroup, InputRightElement, Input,
+  AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader,
+  AlertDialogContent, AlertDialogOverlay,
 } from '@chakra-ui/react';
 import {
   ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon,
@@ -83,7 +84,15 @@ const RoleDetailPage: React.FC = () => {
   const { roles, status } = useAppSelector((s) => s.roles);
   const { user } = useAppSelector((s) => s.auth);
   const candidateModal = useDisclosure();
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId]     = useState<string | null>(null);
+  const [confirmCandidate, setConfirmCandidate] = useState<Candidate | null>(null);
+  const deleteDialog = useDisclosure();
+  const cancelRef    = useRef<HTMLButtonElement>(null);
+
+  const openDeleteConfirm = (c: Candidate) => {
+    setConfirmCandidate(c);
+    deleteDialog.onOpen();
+  };
 
   const role = roles.find((r) => r.id === roleId);
   const isLoading = status === 'loading' && !role;
@@ -92,9 +101,11 @@ const RoleDetailPage: React.FC = () => {
 
   const handleDelete = async (candidateId: string) => {
     if (!role || !user) return;
+    deleteDialog.onClose();
     setDeletingId(candidateId);
     const result = await dispatch(deleteCandidate({ candidateId, roleId: role.id, companyId: user.id }));
     setDeletingId(null);
+    setConfirmCandidate(null);
     if (deleteCandidate.fulfilled.match(result)) {
       toast({ title: 'Invite deleted', description: '1 credit has been refunded.', status: 'success', position: 'top', duration: 3000 });
     } else {
@@ -268,34 +279,16 @@ const RoleDetailPage: React.FC = () => {
                             </Td>
                             <Td>
                               {c.inviteStatus === 'PENDING' && !isExpired && (
-                                <Popover placement="left">
-                                  <PopoverTrigger>
-                                    <Tooltip label="Delete invite" hasArrow>
-                                      <IconButton
-                                        aria-label="Delete invite"
-                                        icon={<DeleteIcon />}
-                                        size="xs" variant="ghost" color="red.400"
-                                        isLoading={deletingId === c.id}
-                                        _hover={{ bg: 'red.50', color: 'red.600' }}
-                                      />
-                                    </Tooltip>
-                                  </PopoverTrigger>
-                                  <PopoverContent w="220px" boxShadow="lg">
-                                    <PopoverArrow />
-                                    <PopoverBody p={4}>
-                                      <Text fontSize="xs" fontWeight="700" color="gray.700" mb={1}>Delete this invite?</Text>
-                                      <Text fontSize="xs" color="gray.500" mb={3}>1 credit will be refunded to your pool.</Text>
-                                      <HStack spacing={2}>
-                                        <Button size="xs" colorScheme="red" fontWeight="700"
-                                          isLoading={deletingId === c.id}
-                                          onClick={() => handleDelete(c.id)}>
-                                          Delete
-                                        </Button>
-                                        <Button size="xs" variant="ghost">Cancel</Button>
-                                      </HStack>
-                                    </PopoverBody>
-                                  </PopoverContent>
-                                </Popover>
+                                <Tooltip label="Delete invite" hasArrow>
+                                  <IconButton
+                                    aria-label="Delete invite"
+                                    icon={<DeleteIcon />}
+                                    size="xs" variant="ghost" color="red.400"
+                                    isLoading={deletingId === c.id}
+                                    _hover={{ bg: 'red.50', color: 'red.600' }}
+                                    onClick={() => openDeleteConfirm(c)}
+                                  />
+                                </Tooltip>
                               )}
                             </Td>
                           </Tr>
@@ -317,6 +310,50 @@ const RoleDetailPage: React.FC = () => {
           role={role}
         />
       )}
+
+      {/* ── Delete Confirmation Dialog ── */}
+      <AlertDialog
+        isOpen={deleteDialog.isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={deleteDialog.onClose}
+        isCentered
+      >
+        <AlertDialogOverlay backdropFilter="blur(4px)" bg="blackAlpha.300">
+          <AlertDialogContent borderRadius="2xl" boxShadow="xl">
+            <AlertDialogHeader fontSize="lg" fontWeight="800" color="gray.900" letterSpacing="-0.02em" pt={6}>
+              Delete Invite?
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              <VStack align="start" spacing={3}>
+                {confirmCandidate && (
+                  <HStack spacing={3} bg="gray.50" borderRadius="lg" p={3} w="full">
+                    <Avatar size="sm" name={confirmCandidate.name} bg="gray.200" />
+                    <Box>
+                      <Text fontWeight="700" fontSize="sm" color="gray.900">{confirmCandidate.name}</Text>
+                      <Text fontSize="xs" color="gray.400">{confirmCandidate.email}</Text>
+                    </Box>
+                  </HStack>
+                )}
+                <Text fontSize="sm" color="gray.600">
+                  This will permanently delete the invite link and <Text as="span" fontWeight="700" color="gray.800">refund 1 credit</Text> back to your company pool.
+                </Text>
+              </VStack>
+            </AlertDialogBody>
+            <AlertDialogFooter gap={3} pb={6}>
+              <Button ref={cancelRef} variant="ghost" onClick={deleteDialog.onClose} fontWeight="700">
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red" fontWeight="700" borderRadius="full"
+                isLoading={!!deletingId}
+                onClick={() => confirmCandidate && handleDelete(confirmCandidate.id)}
+              >
+                Delete Invite
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };
