@@ -56,6 +56,7 @@ export interface AssessmentState {
   currentQuestionIndex: number;
   status: UIStatus;
   submittedAt: string | null;
+  error: string | null;
 }
 
 // ─── Roles ───────────────────────────────────────────────────────────────────

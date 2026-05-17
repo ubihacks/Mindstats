@@ -52,14 +52,12 @@ export const submitAssessment = createAsyncThunk(
       }
 
       if (payload.assessmentType === 'CANDIDATE') {
-        // Update by invite_token if available (candidate without auth), else by respondent id
         const query = supabase.from('candidates').update({ invite_status: 'COMPLETED', disc_scores: discScores });
         const { error: candidateError } = payload.inviteToken
           ? await query.eq('invite_token', payload.inviteToken)
           : await query.eq('id', payload.respondentId);
 
         if (candidateError) return rejectWithValue(candidateError.message);
-        // Clean up session storage
         sessionStorage.removeItem('candidate_invite_token');
       }
 
@@ -78,6 +76,7 @@ const initialState: AssessmentState = {
   currentQuestionIndex: 0,
   status: 'idle',
   submittedAt: null,
+  error: null,
 };
 
 const assessmentSlice = createSlice({
@@ -153,13 +152,16 @@ const assessmentSlice = createSlice({
     builder
       .addCase(submitAssessment.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(submitAssessment.fulfilled, (state, action) => {
         state.status = 'success';
         state.submittedAt = action.payload;
+        state.error = null;
       })
-      .addCase(submitAssessment.rejected, (state) => {
+      .addCase(submitAssessment.rejected, (state, action) => {
         state.status = 'error';
+        state.error = (action.payload as string) ?? 'Submission failed';
       });
   },
 });

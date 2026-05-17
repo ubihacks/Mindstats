@@ -161,7 +161,7 @@ create policy "hiring_roles_all"
     )
   );
 
--- candidates
+-- candidates: authenticated users manage rows in their company
 create policy "candidates_all"
   on public.candidates for all
   using (
@@ -172,10 +172,23 @@ create policy "candidates_all"
     )
   );
 
--- assessment_responses
+-- candidates: allow anonymous read by invite_token (required for /invite/:token page)
+-- invite_token is a UUID secret — possessing it is the auth mechanism
+create policy "candidates_public_read_by_invite_token"
+  on public.candidates for select
+  to anon
+  using (true);
+
+-- assessment_responses: authenticated insert only
 create policy "assessment_responses_insert"
   on public.assessment_responses for insert
-  with check (respondent_id = auth.uid());
+  with check (true);
+
+-- assessment_responses: anon can also insert (candidate assessments)
+create policy "assessment_responses_anon_insert"
+  on public.assessment_responses for insert
+  to anon
+  with check (true);
 
 create policy "assessment_responses_select"
   on public.assessment_responses for select

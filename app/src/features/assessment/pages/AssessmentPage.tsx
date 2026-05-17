@@ -9,7 +9,7 @@
  */
 import React, { useEffect } from 'react';
 import {
-  Box, Button, Container, Flex, HStack, Image, Text,
+  Box, Button, Container, Flex, HStack, Image, Text, useToast,
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, CheckIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -29,9 +29,10 @@ const AssessmentPage: React.FC = () => {
   const navigate   = useNavigate();
   const { roleId, type } = useParams<{ roleId: string; type: 'hiring-manager' | 'candidate' }>();
 
-  const { questions, answers, currentQuestionIndex, status, submittedAt } =
+  const { questions, answers, currentQuestionIndex, status, submittedAt, error } =
     useAppSelector((s) => s.assessment);
   const { user } = useAppSelector((s) => s.auth);
+  const toast = useToast();
 
   const currentQuestion   = questions[currentQuestionIndex];
   const currentAnswer     = currentQuestion ? answers[currentQuestion.id] : undefined;
@@ -40,6 +41,19 @@ const AssessmentPage: React.FC = () => {
   const isCurrentComplete = !!(currentAnswer?.mostOptionId && currentAnswer?.leastOptionId);
   const isLastQuestion    = currentQuestionIndex === questions.length - 1;
   const allComplete       = completedCount === questions.length;
+
+  useEffect(() => {
+    if (status === 'error') {
+      toast({
+        title: 'Submission failed',
+        description: error ?? 'Something went wrong. Please try again.',
+        status: 'error',
+        position: 'top',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [status, error]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (submittedAt) {
