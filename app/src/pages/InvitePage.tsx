@@ -30,26 +30,63 @@ const InvitePage: React.FC = () => {
   const [discScores, setDiscScores]     = useState<DiscScores | null>(null);
 
   useEffect(() => {
-    if (!token) { setStatus('invalid'); return; }
+    if (!token) {
+      void Promise.resolve().then(() => setStatus('invalid'));
+      return;
+    }
 
     const validate = async () => {
+      // Minimal select — avoid columns that may not exist or FK joins that may fail
       const { data, error } = await supabase
         .from('candidates')
-        .select('id, name, invite_status, expires_at, role_id, report_url, disc_scores, share_report_with_candidate, hiring_roles(title)')
+        .select('id, name, invite_status, expires_at, role_id')
         .eq('invite_token', token)
         .maybeSingle();
 
-      if (error || !data) { setStatus('invalid'); return; }
+      if (error) {
+        console.error('[InvitePage] candidates query error:', error);
+        setStatus('invalid');
+        return;
+      }
+      if (!data) {
+        console.warn('[InvitePage] no candidate found for token:', token);
+        setStatus('invalid');
+        return;
+      }
+
+      // Fetch role title separately (avoids FK naming issues)
+      const { data: roleData } = await supabase
+        .from('hiring_roles')
+        .select('title')
+        .eq('id', data.role_id)
+        .maybeSingle();
 
       // Completed — show result screen
       if (data.invite_status === 'COMPLETED') {
         setCandidateName(data.name);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setRoleTitle((data.hiring_roles as any)?.title ?? 'this role');
-        if (data.share_report_with_candidate && data.report_url) {
-          setReportUrl(data.report_url);
+        setRoleTitle(roleData?.title ?? 'this role');
+
+        // Try fetching report_url (exists only if migration ran)
+        const { data: fullCandidate } = await supabase
+          .from('candidates')
+          .select('report_url, share_report_with_candidate')
+          .eq('id', data.id)
+          .maybeSingle();
+        if (fullCandidate?.share_report_with_candidate && fullCandidate?.report_url) {
+          setReportUrl(fullCandidate.report_url);
         }
-        if (data.disc_scores) setDiscScores(data.disc_scores as DiscScores);
+
+        // Try fetching DISC scores from assessment_responses
+        const { data: ar } = await supabase
+          .from('assessment_responses')
+          .select('disc_scores')
+          .eq('role_id', data.role_id)
+          .eq('assessment_type', 'CANDIDATE')
+          .order('submitted_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (ar?.disc_scores) setDiscScores(ar.disc_scores as DiscScores);
+
         setStatus('completed');
         return;
       }
@@ -58,8 +95,7 @@ const InvitePage: React.FC = () => {
       if (expired || data.invite_status === 'EXPIRED') { setStatus('expired'); return; }
 
       setCandidateName(data.name);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setRoleTitle((data.hiring_roles as any)?.title ?? 'this role');
+      setRoleTitle(roleData?.title ?? 'this role');
       setRoleId(data.role_id);
       setStatus('valid');
     };
