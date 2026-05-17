@@ -72,7 +72,7 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
       })
     );
     if (inviteCandidate.fulfilled.match(result)) {
-      const token = (result.payload as { candidate: { invite_token: string } }).candidate.invite_token;
+      const token = (result.payload as { inviteToken: string }).inviteToken;
       const link = `${window.location.origin}/invite/${token}`;
       setInviteLink(link);
       reset();

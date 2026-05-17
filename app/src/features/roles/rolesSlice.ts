@@ -214,7 +214,7 @@ export const inviteCandidate = createAsyncThunk(
         return rejectWithValue(error.message);
       }
 
-      return { roleId: payload.roleId, candidate: data as Candidate };
+      return { roleId: payload.roleId, candidate: data as Candidate, inviteToken };
     } catch (err: unknown) {
       return rejectWithValue('Failed to invite candidate');
     }
