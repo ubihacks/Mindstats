@@ -12,11 +12,13 @@ import AboutPage from '../pages/AboutPage';
 import PublicPricingPage from '../pages/PublicPricingPage';
 import DashboardPage from '../pages/DashboardPage';
 import RolesPage from '../features/roles/pages/RolesPage';
+import RoleDetailPage from '../features/roles/pages/RoleDetailPage';
 import AssessmentPage from '../features/assessment/pages/AssessmentPage';
 import HMDemandPage from '../features/assessment/pages/HMDemandPage';
 import BillingPage from '../features/billing/pages/BillingPage';
 import ReportsPage from '../features/reports/pages/ReportsPage';
 import AdminPage from '../features/admin/pages/AdminPage';
+import InvitePage from '../pages/InvitePage';
 import AssessmentCompletePage from '../pages/AssessmentCompletePage';
 import SuperAdminShell from '../features/superAdmin/SuperAdminShell';
 import SuperAdminDashboard from '../features/superAdmin/SuperAdminDashboard';
@@ -38,6 +40,7 @@ const router = createBrowserRouter([
   { path: '/forgot-password', element: <ForgotPasswordPage /> },
   { path: '/reset-password',  element: <ResetPasswordPage />  },
   // Public assessment routes
+  { path: '/invite/:token',                 element: <InvitePage />           },
   { path: '/assess/:roleId/hiring-manager', element: <HMDemandPage />         },
   { path: '/assess/:roleId/candidate',      element: <AssessmentPage />       },
   { path: '/assess/:roleId/:type',          element: <AssessmentPage />       },
@@ -64,8 +67,9 @@ const router = createBrowserRouter([
       {
         element: <AppShell />,
         children: [
-          { path: '/dashboard', element: <DashboardPage /> },
-          { path: '/roles',     element: <RolesPage />     },
+          { path: '/dashboard',    element: <DashboardPage />    },
+          { path: '/roles',        element: <RolesPage />        },
+          { path: '/roles/:roleId', element: <RoleDetailPage />  },
           { path: '/reports',   element: <ReportsPage />   },
           {
             element: <ProtectedRoute allowedRoles={['ADMIN']} />,

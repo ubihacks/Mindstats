@@ -49,11 +49,15 @@ const AssessmentPage: React.FC = () => {
   }, [submittedAt, dispatch, navigate]);
 
   const handleSubmit = () => {
-    if (!allComplete || !roleId || !user) return;
+    if (!allComplete || !roleId) return;
+    const inviteToken = sessionStorage.getItem('candidate_invite_token') ?? undefined;
+    // Candidates use invite token; HMs use their auth user id
+    const respondentId = type === 'hiring-manager' ? (user?.id ?? '') : (inviteToken ?? user?.id ?? '');
     dispatch(submitAssessment({
       roleId,
       assessmentType: type === 'hiring-manager' ? 'HIRING_MANAGER' : 'CANDIDATE',
-      respondentId:   user.id,
+      respondentId,
+      inviteToken,
     }));
   };
 

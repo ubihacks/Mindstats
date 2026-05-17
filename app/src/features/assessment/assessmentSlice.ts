@@ -9,7 +9,7 @@ import type { AssessmentState } from '../../types';
 export const submitAssessment = createAsyncThunk(
   'assessment/submit',
   async (
-    payload: { roleId: string; assessmentType: 'HIRING_MANAGER' | 'CANDIDATE'; respondentId: string },
+    payload: { roleId: string; assessmentType: 'HIRING_MANAGER' | 'CANDIDATE'; respondentId: string; inviteToken?: string },
     { getState, rejectWithValue }
   ) => {
     try {
@@ -37,12 +37,15 @@ export const submitAssessment = createAsyncThunk(
       }
 
       if (payload.assessmentType === 'CANDIDATE') {
-        const { error: candidateError } = await supabase
-          .from('candidates')
-          .update({ invite_status: 'COMPLETED' })
-          .eq('id', payload.respondentId);
+        // Update by invite_token if available (candidate without auth), else by respondent id
+        const query = supabase.from('candidates').update({ invite_status: 'COMPLETED' });
+        const { error: candidateError } = payload.inviteToken
+          ? await query.eq('invite_token', payload.inviteToken)
+          : await query.eq('id', payload.respondentId);
 
         if (candidateError) return rejectWithValue(candidateError.message);
+        // Clean up session storage
+        sessionStorage.removeItem('candidate_invite_token');
       }
 
       return new Date().toISOString();

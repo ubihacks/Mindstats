@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { MdWork, MdPeople, MdCheckCircle } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { fetchRoles, selectRole } from '../rolesSlice';
+import { useNavigate } from 'react-router-dom';
 
 import CreateRoleModal from '../components/CreateRoleModal';
 import InviteHiringManagerModal from '../components/InviteHiringManagerModal';
@@ -29,6 +30,7 @@ const statusConfig: Record<string, { colorScheme: string; label: string; step: n
 const RolesPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const navigate = useNavigate();
   const { user } = useAppSelector((s) => s.auth);
   const { roles, status, selectedRoleId } = useAppSelector((s) => s.roles);
   const { credits } = useAppSelector((s) => s.billing);
@@ -290,6 +292,19 @@ const RolesPage: React.FC = () => {
                   {/* Action Buttons */}
                   {(user?.role === 'ADMIN' || user?.role === 'HR') && (
                     <VStack spacing={2}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        w="full"
+                        leftIcon={<Icon as={MdWork} boxSize={3} />}
+                        onClick={() => navigate(`/roles/${role.id}`)}
+                        fontWeight="600"
+                        borderColor="slate.200"
+                        color="slate.700"
+                        _hover={{ bg: 'slate.50', borderColor: 'slate.300' }}
+                      >
+                        View Details
+                      </Button>
                       <Button
                         size="sm"
                         variant="outline"
