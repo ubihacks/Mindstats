@@ -40,10 +40,10 @@ export async function generateDiscReport(
 
   const blob = await pdf(React.createElement(DiscReportPDF, { data: reportData })).toBlob();
 
-  const url      = URL.createObjectURL(blob);
-  const anchor   = document.createElement('a');
-  anchor.href    = url;
-  anchor.download = `mindstat-disc-${respondentName.replace(/\s+/g, '-').toLowerCase()}.pdf`;
-  anchor.click();
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob);
+  const tab = window.open(url, '_blank');
+  // Revoke the object URL after the new tab has had time to load it
+  if (tab) {
+    tab.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+  }
 }

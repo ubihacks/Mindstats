@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   Document, Page, Text, View, StyleSheet, Svg, Path, Rect, Circle, Line,
-  Font,
 } from '@react-pdf/renderer';
 import { PROFILE_CONTENT } from './data/profileContent';
 import { COMPATIBILITY_MATRIX, COMPAT_LABELS, COMPAT_COLORS, COMPAT_BG, COMPATIBILITY_EXPLANATION } from './data/compatibility';
@@ -30,32 +29,10 @@ const DISC_COLOR: Record<string, string> = {
 
 const DIMS = ['D', 'I', 'S', 'C'] as const;
 
-// ─── Fonts ────────────────────────────────────────────────────────────────────
-const INTER_400 = 'https://unpkg.com/@fontsource/inter@5.0.0/files/inter-latin-400-normal.woff2';
-const INTER_600 = 'https://unpkg.com/@fontsource/inter@5.0.0/files/inter-latin-600-normal.woff2';
-const INTER_700 = 'https://unpkg.com/@fontsource/inter@5.0.0/files/inter-latin-700-normal.woff2';
-const INTER_800 = 'https://unpkg.com/@fontsource/inter@5.0.0/files/inter-latin-800-normal.woff2';
-
-Font.register({
-  family: 'Inter',
-  fonts: [
-    // Normal weights
-    { src: INTER_400, fontWeight: 400, fontStyle: 'normal' },
-    { src: INTER_600, fontWeight: 600, fontStyle: 'normal' },
-    { src: INTER_700, fontWeight: 700, fontStyle: 'normal' },
-    { src: INTER_800, fontWeight: 800, fontStyle: 'normal' },
-    // Italic variants — mapped to normal faces (Inter has no italic in this CDN path)
-    { src: INTER_400, fontWeight: 400, fontStyle: 'italic' },
-    { src: INTER_600, fontWeight: 600, fontStyle: 'italic' },
-    { src: INTER_700, fontWeight: 700, fontStyle: 'italic' },
-    { src: INTER_800, fontWeight: 800, fontStyle: 'italic' },
-  ],
-});
-
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
-  page: { fontFamily: 'Inter', backgroundColor: BRAND.white, padding: 0 },
-  coverPage: { fontFamily: 'Inter', backgroundColor: BRAND.navy, padding: 0 },
+  page: { fontFamily: 'Helvetica', backgroundColor: BRAND.white, padding: 0 },
+  coverPage: { fontFamily: 'Helvetica', backgroundColor: BRAND.navy, padding: 0 },
 
   // Header bar on content pages
   pageHeader: { backgroundColor: BRAND.purple, paddingHorizontal: 36, paddingVertical: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -348,7 +325,7 @@ const CoverPage = ({ data }: { data: DiscReportData }) => (
     {/* Top bar */}
     <View style={{ paddingHorizontal: 36, paddingTop: 28, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <LogoWhite />
-      <Text style={{ fontSize: 8, color: BRAND.gray400, fontStyle: 'italic' }}>Private and Confidential</Text>
+      <Text style={{ fontSize: 8, color: BRAND.gray400 }}>Private and Confidential</Text>
     </View>
 
     {/* Hero text */}
@@ -395,7 +372,7 @@ const CoverPage = ({ data }: { data: DiscReportData }) => (
 
     {/* Footer tagline */}
     <View style={{ position: 'absolute', bottom: 20, left: 36 }}>
-      <Text style={{ fontSize: 8, color: BRAND.gray400, fontStyle: 'italic' }}>Know yourself. Lead better. · mindstat.io</Text>
+      <Text style={{ fontSize: 8, color: BRAND.gray400 }}>Know yourself. Lead better. · mindstat.io</Text>
     </View>
   </Page>
 );
@@ -966,5 +943,25 @@ export const DiscReportPDF = ({ data }: { data: DiscReportData }) => (
       pageNum={10}
     />
     <OverallRecommendationsPage data={data} pageNum={11} />
+
+    {/* 12 — Raw Data (debug) */}
+    <Page size="A4" style={s.page}>
+      <View style={s.pageHeader}>
+        <Text style={s.pageHeaderText}>RAW JSON DATA</Text>
+        <Text style={s.pageHeaderText}>mindstat.io</Text>
+      </View>
+      <View style={[s.body, { paddingTop: 20 }]}>
+        <Text style={[s.h3, { marginBottom: 12 }]}>disc_results record</Text>
+        <View style={{ backgroundColor: BRAND.gray50, borderRadius: 6, padding: 14, borderWidth: 1, borderColor: BRAND.gray100 }}>
+          <Text style={{ fontFamily: 'Courier', fontSize: 7, color: BRAND.gray600, lineHeight: 1.6 }}>
+            {JSON.stringify(data, null, 2)}
+          </Text>
+        </View>
+      </View>
+      <View style={s.footer}>
+        <Text style={s.footerText}>Mindstat · mindstat.io</Text>
+        <Text style={s.footerText}>Page 12</Text>
+      </View>
+    </Page>
   </Document>
 );
