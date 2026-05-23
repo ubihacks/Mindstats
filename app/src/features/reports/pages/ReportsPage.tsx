@@ -201,7 +201,7 @@ const ReportsPage: React.FC = () => {
                                 </VStack>
                               ) : (
                                 <Badge bg="purple.50" color="purple.700" borderRadius="full" fontSize="xs" fontWeight="600" px={2.5}>
-                                  Hiring Manager
+                                  Project Manager
                                 </Badge>
                               )}
                             </Td>

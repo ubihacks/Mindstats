@@ -385,7 +385,7 @@ const PublicPricingPage: React.FC = () => {
               {
                 step: '01',
                 title: '1 credit = 1 candidate',
-                body: 'Each credit unlocks one candidate assessment link. The hiring manager assessment is always free.',
+                body: 'Each credit unlocks one candidate assessment link. The project manager assessment is always free.',
                 cs: 'brand',
               },
               {

@@ -154,7 +154,7 @@ const LandingPage: React.FC = () => {
                     </Box>
                     <VStack align="start" spacing={0}>
                       <Text fontSize="xs" fontWeight="700" color="white" fontFamily="heading">Behavioural Match Engine</Text>
-                      <Text fontSize="10px" color="whiteAlpha.700">DISC · Hiring Manager Profile</Text>
+                      <Text fontSize="10px" color="whiteAlpha.700">DISC · Project Manager Profile</Text>
                     </VStack>
                   </HStack>
                 </Box>

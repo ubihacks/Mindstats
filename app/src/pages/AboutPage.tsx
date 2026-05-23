@@ -31,7 +31,7 @@ const PILLARS = [
     icon: MdGroups,
     title: 'Team-level intelligence',
     description:
-      'Mindstat surfaces not just individual profiles but the behavioural compatibility between hiring managers and candidates — a team-first approach to recruitment.',
+      'Mindstat surfaces not just individual profiles but the behavioural compatibility between project managers and candidates — a team-first approach to recruitment.',
     img: '/9.jpg',
     colorScheme: 'brand',
   },

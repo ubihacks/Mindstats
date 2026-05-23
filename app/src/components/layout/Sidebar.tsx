@@ -20,7 +20,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard',  to: '/dashboard', icon: MdDashboard },
-  { label: 'Roles',      to: '/roles',     icon: MdWork,               roles: ['ADMIN', 'HR', 'HIRING_MANAGER'] },
+  { label: 'Projects',   to: '/projects',  icon: MdWork,               roles: ['ADMIN', 'HR', 'HIRING_MANAGER'] },
   { label: 'Reports',    to: '/reports',   icon: MdAssignment,         roles: ['ADMIN', 'HR', 'HIRING_MANAGER'] },
   { label: 'Billing',    to: '/billing',   icon: MdCreditCard,         roles: ['ADMIN'] },
   { label: 'Admin',      to: '/admin',     icon: MdAdminPanelSettings, roles: ['ADMIN'] },

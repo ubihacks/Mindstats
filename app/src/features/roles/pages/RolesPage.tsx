@@ -1,42 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Button, Heading, HStack, VStack, Text, Badge, Flex,
+  Box, Button, Heading, HStack, VStack, Text, Flex,
   SimpleGrid, Skeleton, Tooltip, Icon, useDisclosure, Divider,
-  Alert, AlertIcon, Tag, TagLabel, Avatar, Table, Thead, Tbody,
-  Tr, Th, Td, TableContainer, IconButton, useToast, Progress,
+  Alert, AlertIcon, Tag,
 } from '@chakra-ui/react';
-import { AddIcon, LockIcon, UnlockIcon, EmailIcon } from '@chakra-ui/icons';
+import { AddIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { MdWork, MdPeople, MdCheckCircle } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
-import { fetchRoles, selectRole } from '../rolesSlice';
+import { fetchRoles } from '../rolesSlice';
 import { useNavigate } from 'react-router-dom';
 
 import CreateRoleModal from '../components/CreateRoleModal';
-import InviteHiringManagerModal from '../components/InviteHiringManagerModal';
 import type { HiringRole } from '../../../types';
 import InviteCandidateModal from '../components/InviteCandidateModal';
 
 const MotionBox = motion(Box);
 
-const STEP_LABELS = ['Create Role', 'HM Assessment', 'Invite Candidates'];
-
-const statusConfig: Record<string, { colorScheme: string; label: string; step: number }> = {
-  IDLE:        { colorScheme: 'gray',   label: 'Not Started',   step: 0 },
-  IN_PROGRESS: { colorScheme: 'orange', label: 'HM In Progress', step: 1 },
-  COMPLETED:   { colorScheme: 'teal',   label: 'Completed',      step: 2 },
-};
-
 const RolesPage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const toast = useToast();
   const navigate = useNavigate();
   const { user } = useAppSelector((s) => s.auth);
-  const { roles, status, selectedRoleId } = useAppSelector((s) => s.roles);
+  const { roles, status } = useAppSelector((s) => s.roles);
   const { credits } = useAppSelector((s) => s.billing);
 
   const createModal = useDisclosure();
-  const hmModal = useDisclosure();
   const candidateModal = useDisclosure();
 
   const [activeRole, setActiveRole] = useState<HiringRole | null>(null);
@@ -45,11 +33,6 @@ const RolesPage: React.FC = () => {
     // DataBootstrap handles initial load — only re-fetch if empty
     if (user?.id && roles.length === 0) dispatch(fetchRoles(user.id));
   }, [user]);
-
-  const handleOpenHMModal = (role: HiringRole) => {
-    setActiveRole(role);
-    hmModal.onOpen();
-  };
 
   const handleOpenCandidateModal = (role: HiringRole) => {
     setActiveRole(role);
@@ -64,16 +47,16 @@ const RolesPage: React.FC = () => {
       <Flex justify="space-between" align="flex-start" mb={8}>
         <VStack align="start" spacing={0.5}>
           <Heading size="lg" fontWeight="800" color="slate.900" letterSpacing="-0.03em">
-            Hiring Roles
+            Projects
           </Heading>
           <Text color="slate.500" fontSize="sm">
-            {roles.length} role{roles.length !== 1 ? 's' : ''} · Manage assessments and candidates
+            {roles.length} project{roles.length !== 1 ? 's' : ''}
           </Text>
         </VStack>
 
         {(user?.role === 'ADMIN' || user?.role === 'HR') && (
           <Tooltip
-            label={credits < 1 ? 'Insufficient credits — purchase a plan first' : 'Create a new hiring role'}
+            label={credits < 1 ? 'Insufficient credits — purchase a plan first' : 'Create a new project'}
             hasArrow
           >
             <Button
@@ -88,7 +71,7 @@ const RolesPage: React.FC = () => {
               _disabled={{ opacity: 0.5, cursor: 'not-allowed', transform: 'none' }}
               transition="all 0.15s"
             >
-              New Role
+              New Project
             </Button>
           </Tooltip>
         )}
@@ -138,8 +121,8 @@ const RolesPage: React.FC = () => {
               <Icon as={MdWork} color="brand.400" boxSize={7} />
             </Box>
             <VStack spacing={1}>
-              <Heading size="md" color="slate.700" fontWeight="700">No roles yet</Heading>
-              <Text color="slate.400" fontSize="sm">Create your first hiring role to start the assessment workflow</Text>
+              <Heading size="md" color="slate.700" fontWeight="700">No projects yet</Heading>
+              <Text color="slate.400" fontSize="sm">Create your first project to start inviting candidates</Text>
             </VStack>
             <Button
               bg="brand.600"
@@ -149,17 +132,13 @@ const RolesPage: React.FC = () => {
               leftIcon={<AddIcon boxSize={3} />}
               _hover={{ bg: 'brand.700' }}
             >
-              Create Role
+              Create Project
             </Button>
           </VStack>
         </Box>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
           {roles.map((role, idx) => {
-            const sc = statusConfig[role.hiringManagerStatus] ?? statusConfig['IDLE'];
-            const isUnlocked = true; // Gatekeeper temporarily disabled
-            const hmInvited = role.hiringManagerStatus !== 'IDLE';
-
             return (
               <MotionBox
                 key={role.id}
@@ -170,20 +149,13 @@ const RolesPage: React.FC = () => {
                 borderRadius="2xl"
                 boxShadow="card"
                 border="1px solid"
-                borderColor={isUnlocked ? 'teal.100' : 'slate.200'}
+                borderColor="slate.200"
                 overflow="hidden"
                 _hover={{ boxShadow: 'card-hover', transform: 'translateY(-2px)' }}
                 style={{ transition: 'all 0.2s ease' }}
               >
-                {/* Status accent bar — uses token-based solid colors */}
-                <Box
-                  h="3px"
-                  bg={
-                    isUnlocked ? 'teal.500' :
-                    role.hiringManagerStatus === 'IN_PROGRESS' ? 'orange.400' :
-                    'slate.200'
-                  }
-                />
+                {/* Status accent bar */}
+                <Box h="3px" bg="brand.500" />
 
                 <Box p={5}>
                   {/* Header */}
@@ -196,17 +168,6 @@ const RolesPage: React.FC = () => {
                         {role.title}
                       </Heading>
                     </Box>
-                    <Badge
-                      colorScheme={sc.colorScheme}
-                      borderRadius="full"
-                      fontSize="xs"
-                      fontWeight="700"
-                      px={2.5}
-                      py={0.5}
-                      flexShrink={0}
-                    >
-                      {sc.label}
-                    </Badge>
                   </Flex>
 
                   {/* Tags */}
@@ -218,64 +179,6 @@ const RolesPage: React.FC = () => {
                       {role.function}
                     </Tag>
                   </HStack>
-
-                  {/* Workflow Progress */}
-                  <Box bg="slate.50" borderRadius="xl" p={3} mb={4}>
-                    <Text fontSize="xs" fontWeight="700" color="slate.500" mb={2.5} textTransform="uppercase" letterSpacing="0.06em">
-                      Workflow
-                    </Text>
-                    <VStack spacing={1.5} align="stretch">
-                      {STEP_LABELS.map((step, i) => {
-                        const done = sc.step > i;
-                        const active = sc.step === i;
-                        return (
-                          <HStack key={step} spacing={2.5}>
-                            <Box
-                              w={5} h={5} borderRadius="full"
-                              bg={done ? 'green.500' : active ? 'brand.500' : 'slate.200'}
-                              display="flex" alignItems="center" justifyContent="center"
-                              flexShrink={0}
-                            >
-                              {done ? (
-                                <Icon as={MdCheckCircle} color="white" boxSize={3.5} />
-                              ) : (
-                                <Text fontSize="8px" fontWeight="800" color={active ? 'white' : 'slate.400'}>
-                                  {i + 1}
-                                </Text>
-                              )}
-                            </Box>
-                            <Text
-                              fontSize="xs"
-                              fontWeight={active ? '700' : '500'}
-                              color={done ? 'green.600' : active ? 'brand.600' : 'slate.400'}
-                            >
-                              {step}
-                            </Text>
-                          </HStack>
-                        );
-                      })}
-                    </VStack>
-                  </Box>
-
-                  {/* HM Info */}
-                  {role.hiringManagerName && (
-                    <HStack mb={4} bg="slate.50" borderRadius="lg" px={3} py={2}>
-                      <Avatar size="xs" name={role.hiringManagerName} bg="brand.600" color="white" />
-                      <VStack align="start" spacing={0} flex={1} overflow="hidden">
-                        <Text fontSize="xs" fontWeight="600" color="slate.700" noOfLines={1}>
-                          {role.hiringManagerName}
-                        </Text>
-                        <Text fontSize="xs" color="slate.400" noOfLines={1}>
-                          {role.hiringManagerEmail}
-                        </Text>
-                      </VStack>
-                      <Icon
-                        as={isUnlocked ? UnlockIcon : LockIcon}
-                        color={isUnlocked ? 'green.500' : 'slate.300'}
-                        boxSize={3.5}
-                      />
-                    </HStack>
-                  )}
 
                   {/* Stats row */}
                   <HStack justify="space-between" mb={4}>
@@ -297,7 +200,7 @@ const RolesPage: React.FC = () => {
                         variant="outline"
                         w="full"
                         leftIcon={<Icon as={MdWork} boxSize={3} />}
-                        onClick={() => navigate(`/roles/${role.id}`)}
+                        onClick={() => navigate(`/projects/${role.id}`)}
                         fontWeight="600"
                         borderColor="slate.200"
                         color="slate.700"
@@ -306,28 +209,11 @@ const RolesPage: React.FC = () => {
                         View Details
                       </Button>
                       <Button
-                        size="sm"
-                        variant="outline"
-                        colorScheme="blue"
-                        w="full"
-                        leftIcon={<EmailIcon boxSize={3} />}
-                        onClick={() => handleOpenHMModal(role)}
-                        isDisabled={hmInvited}
-                        fontWeight="600"
-                        borderColor="slate.200"
-                        color={hmInvited ? 'slate.400' : 'slate.700'}
-                        _hover={{ bg: 'slate.50', borderColor: 'slate.300' }}
-                        _disabled={{ opacity: 0.5 }}
-                      >
-                        {hmInvited ? '✓ HM Invited' : 'Invite Hiring Manager'}
-                      </Button>
-
-                      <Button
                           size="sm"
                           w="full"
                           bg="green.500"
                           color="white"
-                          leftIcon={<UnlockIcon boxSize={3} />}
+                          leftIcon={<Icon as={MdPeople} boxSize={3} />}
                           onClick={() => handleOpenCandidateModal(role)}
                           fontWeight="600"
                           _hover={{ bg: 'green.600', transform: 'translateY(-1px)' }}
@@ -347,10 +233,7 @@ const RolesPage: React.FC = () => {
       {/* Modals */}
       <CreateRoleModal isOpen={createModal.isOpen} onClose={createModal.onClose} />
       {activeRole && (
-        <>
-          <InviteHiringManagerModal isOpen={hmModal.isOpen} onClose={hmModal.onClose} role={activeRole} />
-          <InviteCandidateModal isOpen={candidateModal.isOpen} onClose={candidateModal.onClose} role={activeRole} />
-        </>
+        <InviteCandidateModal isOpen={candidateModal.isOpen} onClose={candidateModal.onClose} role={activeRole} />
       )}
     </Box>
   );

@@ -109,7 +109,7 @@ const OverviewView: React.FC = () => {
         <StatCard label="Companies"    value={companies.length} sub={`${paidCompanies} on paid plans`} icon={MdBusiness}   accent="blue"   isLoading={isLoading} />
         <StatCard label="Total Users"  value={totalUsers}       sub="across all workspaces"            icon={MdPeople}     accent="purple" isLoading={isLoading} />
         <StatCard label="Credits Held" value={totalCredits}     sub="remaining across all companies"   icon={MdCreditCard} accent="green"  isLoading={isLoading} />
-        <StatCard label="Active Roles" value={totalRoles}       sub="hiring roles created"             icon={MdVerified}   accent="orange" isLoading={isLoading} />
+        <StatCard label="Active Projects" value={totalRoles}       sub="projects created"             icon={MdVerified}   accent="orange" isLoading={isLoading} />
       </SimpleGrid>
 
       {/* Plan breakdown */}
@@ -472,7 +472,7 @@ const AnalyticsView: React.FC = () => {
         <StatCard label="Total Credits" value={totalCredits} sub="remaining (all cos)"      icon={MdCreditCard}  accent="green"  isLoading={isLoading} />
         <StatCard label="Credits Used"  value={totalUsed}   sub="consumed assessments"      icon={MdTrendingUp}  accent="orange" isLoading={isLoading} />
         <StatCard label="Total Users"   value={totalUsers}  sub="across all workspaces"     icon={MdPeople}      accent="purple" isLoading={isLoading} />
-        <StatCard label="Hiring Roles"  value={totalRoles}  sub="roles created"             icon={MdVerified}    accent="blue"   isLoading={isLoading} />
+        <StatCard label="Projects"  value={totalRoles}  sub="projects created"             icon={MdVerified}    accent="blue"   isLoading={isLoading} />
       </SimpleGrid>
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
@@ -728,7 +728,7 @@ const UsersView: React.FC = () => {
                 >
                   <option value="ADMIN">Admin</option>
                   <option value="HR">HR</option>
-                  <option value="HIRING_MANAGER">Hiring Manager</option>
+                  <option value="HIRING_MANAGER">Project Manager</option>
                 </Select>
               </FormControl>
             </VStack>

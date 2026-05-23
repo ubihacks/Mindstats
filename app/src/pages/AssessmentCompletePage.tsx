@@ -50,7 +50,7 @@ const AssessmentCompletePage: React.FC = () => {
 
   const handleDownloadCSV = () => {
     const label = isHM ? 'role-profile' : 'candidate-assessment';
-    const csv   = buildCSV(answers, isHM ? 'Hiring Manager — Role Profile' : 'Candidate Assessment');
+    const csv   = buildCSV(answers, isHM ? 'Project Manager — Project Profile' : 'Candidate Assessment');
     const blob  = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url   = URL.createObjectURL(blob);
     const a     = document.createElement('a');
@@ -140,7 +140,7 @@ const AssessmentCompletePage: React.FC = () => {
 
             <Button
               size="lg" w="full" bg={NAVY} color="white" fontWeight="700" borderRadius="full"
-              onClick={() => navigate(isHM ? '/roles' : '/')}
+              onClick={() => navigate(isHM ? '/projects' : '/')}
               _hover={{ bg: '#002952', transform: 'translateY(-1px)', boxShadow: 'lg' }}
               _active={{ bg: '#00152b' }}
               transition="all 0.15s"

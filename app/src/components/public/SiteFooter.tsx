@@ -43,7 +43,7 @@ const SiteFooter: React.FC = () => (
           </HStack>
           <Text fontSize="sm" color="whiteAlpha.600" lineHeight="1.7">
             Mindstat is a B2B behavioural intelligence platform that matches
-            candidates to hiring managers using the DISC framework — so you
+            candidates to project managers using the DISC framework — so you
             hire with confidence, not guesswork.
           </Text>
           <Text fontSize="xs" color="whiteAlpha.400" fontWeight="600" letterSpacing="0.05em">

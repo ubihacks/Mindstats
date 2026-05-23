@@ -86,7 +86,7 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
       <ModalOverlay backdropFilter="blur(4px)" bg="blackAlpha.300" />
       <ModalContent borderRadius="2xl" boxShadow="xl">
         <ModalHeader fontWeight="800" fontSize="lg" pt={6} color="slate.900" letterSpacing="-0.03em">
-          {inviteLink ? '✓ HM Invited — Copy Link' : 'Invite Hiring Manager'}
+          {inviteLink ? '✓ PM Invited — Copy Link' : 'Invite Project Manager'}
         </ModalHeader>
         <ModalCloseButton color="slate.400" />
 
@@ -97,7 +97,7 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
                 <Alert status="success" borderRadius="xl" fontSize="sm">
                   <AlertIcon />
                   <Text fontSize="xs">
-                    Hiring manager invited for <strong>{role.title}</strong>. 1 credit deducted. Share the link below:
+                    Project manager invited for <strong>{role.title}</strong>. 1 credit deducted. Share the link below:
                   </Text>
                 </Alert>
                 <Box w="full">
@@ -129,7 +129,7 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
                     </InputRightElement>
                   </InputGroup>
                   <Text fontSize="xs" color="slate.400" mt={1.5}>
-                    Send this link to the hiring manager. They'll fill out the role behavioural demand form.
+                    Send this link to the project manager. They'll fill out the project behavioural demand form.
                   </Text>
                 </Box>
               </VStack>

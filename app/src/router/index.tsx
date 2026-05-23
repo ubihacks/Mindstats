@@ -68,8 +68,8 @@ const router = createBrowserRouter([
         element: <AppShell />,
         children: [
           { path: '/dashboard',    element: <DashboardPage />    },
-          { path: '/roles',        element: <RolesPage />        },
-          { path: '/roles/:roleId', element: <RoleDetailPage />  },
+          { path: '/projects',         element: <RolesPage />        },
+          { path: '/projects/:roleId',  element: <RoleDetailPage />  },
           { path: '/reports',   element: <ReportsPage />   },
           {
             element: <ProtectedRoute allowedRoles={['ADMIN']} />,

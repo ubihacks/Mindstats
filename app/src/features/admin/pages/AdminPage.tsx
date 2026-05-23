@@ -319,7 +319,7 @@ const AdminPage: React.FC = () => {
                   borderColor="slate.200"
                 >
                   <option value="HR">HR</option>
-                  <option value="HIRING_MANAGER">Hiring Manager</option>
+                  <option value="HIRING_MANAGER">Project Manager</option>
                   <option value="ADMIN">Admin</option>
                 </Select>
               </FormControl>

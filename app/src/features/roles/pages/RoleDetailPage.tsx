@@ -4,13 +4,13 @@ import React, { useState, useRef } from 'react';
 import {
   Box, Heading, Text, VStack, HStack, Flex, Badge, Button, Avatar,
   Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tag, Icon,
-  Divider, SimpleGrid, Skeleton, Tooltip, useDisclosure, IconButton,
+  SimpleGrid, Skeleton, Tooltip, useDisclosure, IconButton,
   useToast, InputGroup, InputRightElement, Input,
   AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader,
   AlertDialogContent, AlertDialogOverlay,
 } from '@chakra-ui/react';
 import {
-  ArrowBackIcon, EmailIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon, RepeatIcon, DownloadIcon,
+  ArrowBackIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon, RepeatIcon, DownloadIcon,
 } from '@chakra-ui/icons';
 import { MdWork, MdPeople, MdCheckCircle, MdPending, MdTimer } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -32,12 +32,6 @@ const DISC_COLOR: Record<string, string> = {
 };
 const DISC_LABEL: Record<string, string> = {
   D: 'Dominance', I: 'Influence', S: 'Steadiness', C: 'Conscientiousness',
-};
-
-const HM_STATUS: Record<string, { colorScheme: string; label: string }> = {
-  IDLE:        { colorScheme: 'gray',   label: 'Not Started'   },
-  IN_PROGRESS: { colorScheme: 'orange', label: 'In Progress'   },
-  COMPLETED:   { colorScheme: 'green',  label: 'Completed'     },
 };
 
 /* ── Stat Card ── */
@@ -106,8 +100,6 @@ const RoleDetailPage: React.FC = () => {
 
   const role = roles.find((r) => r.id === roleId);
   const isLoading = status === 'loading' && !role;
-
-  const hmStatus = HM_STATUS[role?.hiringManagerStatus ?? 'IDLE'];
 
   const handleDownloadResponses = async (c: Candidate) => {
     if (!role) return;
@@ -183,7 +175,7 @@ const RoleDetailPage: React.FC = () => {
     return (
       <Box py={20} textAlign="center">
         <Text color="gray.400" fontSize="lg">Role not found.</Text>
-        <Button mt={4} variant="ghost" leftIcon={<ArrowBackIcon />} onClick={() => navigate('/roles')}>
+        <Button mt={4} variant="ghost" leftIcon={<ArrowBackIcon />} onClick={() => navigate('/projects')}>
           Back to Roles
         </Button>
       </Box>
@@ -195,7 +187,7 @@ const RoleDetailPage: React.FC = () => {
       {/* ── Back + Header ── */}
       <Button
         variant="ghost" leftIcon={<ArrowBackIcon />} size="sm" color="gray.500"
-        mb={6} onClick={() => navigate('/roles')} _hover={{ bg: 'gray.100' }}
+        mb={6} onClick={() => navigate('/projects')} _hover={{ bg: 'gray.100' }}
       >
         All Roles
       </Button>
@@ -217,7 +209,6 @@ const RoleDetailPage: React.FC = () => {
               <HStack spacing={2} flexWrap="wrap">
                 <Tag size="sm" bg="blue.50" color="blue.700" fontWeight="600" borderRadius="full">{role!.jobLevel}</Tag>
                 <Tag size="sm" bg="purple.50" color="purple.700" fontWeight="600" borderRadius="full">{role!.function}</Tag>
-                <Badge colorScheme={hmStatus.colorScheme} borderRadius="full" px={2.5} fontWeight="700">{hmStatus.label}</Badge>
               </HStack>
             </Box>
             <Button
@@ -236,32 +227,6 @@ const RoleDetailPage: React.FC = () => {
             <InfoCard label="Completed"       value={completed}               icon={MdCheckCircle} color="green"  />
             <InfoCard label="Expired"         value={expired}                 icon={MdPending}     color="red"    />
           </SimpleGrid>
-
-          {/* ── Hiring Manager section ── */}
-          <Box bg="white" borderRadius="xl" p={6} border="1px solid" borderColor="gray.100" mb={6}>
-            <Text fontSize="xs" fontWeight="700" color="gray.500" textTransform="uppercase" letterSpacing="0.08em" mb={4}>
-              Hiring Manager
-            </Text>
-            {role!.hiringManagerName ? (
-              <HStack spacing={4}>
-                <Avatar size="sm" name={role!.hiringManagerName} bg={NAVY} color="white" />
-                <Box>
-                  <Text fontWeight="700" fontSize="sm" color="gray.900">{role!.hiringManagerName}</Text>
-                  <Text fontSize="xs" color="gray.400">{role!.hiringManagerEmail}</Text>
-                </Box>
-                <Badge colorScheme={hmStatus.colorScheme} borderRadius="full" px={2.5} ml="auto" fontWeight="700">
-                  Assessment: {hmStatus.label}
-                </Badge>
-              </HStack>
-            ) : (
-              <HStack color="gray.400" spacing={2}>
-                <Icon as={EmailIcon} />
-                <Text fontSize="sm">No Hiring Manager assigned yet.</Text>
-              </HStack>
-            )}
-          </Box>
-
-          <Divider mb={6} />
 
           {/* ── Candidates table ── */}
           <Box>

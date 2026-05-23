@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import {
   Box, SimpleGrid, Heading, Text, VStack, HStack, Flex,
-  Badge, Button, Skeleton, Icon, Divider,
+  Badge, Button, Skeleton, Icon,
   Table, Thead, Tbody, Tr, Th, Td, TableContainer,
-  Tag, Tooltip, Progress,
+  Progress,
 } from '@chakra-ui/react';
-import { LockIcon, UnlockIcon, AddIcon, ArrowForwardIcon } from '@chakra-ui/icons';
-import { MdWork, MdPeople, MdCreditCard, MdPendingActions, MdTrendingUp } from 'react-icons/md';
+import { AddIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { MdWork, MdPeople, MdCreditCard, MdTrendingUp } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
@@ -82,11 +82,6 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, sub, icon, colorSchem
   </Box>
 );
 
-const statusConfig: Record<string, { colorScheme: string; label: string }> = {
-  IDLE:        { colorScheme: 'gray',   label: 'Not Started' },
-  IN_PROGRESS: { colorScheme: 'orange', label: 'In Progress' },
-  COMPLETED:   { colorScheme: 'teal',   label: 'Completed'   },
-};
 
 const DashboardPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -104,8 +99,6 @@ const DashboardPage: React.FC = () => {
   }, [user]);
 
   const totalCandidates = roles.reduce((acc, r) => acc + (r.candidates?.length ?? 0), 0);
-  const completedRoles  = roles.filter((r) => r.hiringManagerStatus === 'COMPLETED').length;
-  const pendingHM       = roles.filter((r) => r.hiringManagerStatus === 'IN_PROGRESS').length;
   const creditUsagePct  = usedCredits > 0 ? Math.min((credits / (credits + usedCredits)) * 100, 100) : 100;
 
   return (
@@ -132,20 +125,19 @@ const DashboardPage: React.FC = () => {
           <Button
             leftIcon={<AddIcon boxSize={3} />}
             colorScheme="brand"
-            onClick={() => navigate('/roles')}
-            _hover={{ transform: 'translateY(-1px)', boxShadow: 'brand-glow' }}
+            onClick={() => navigate('/projects')}
             _active={{ transform: 'translateY(0)' }}
             transition="all 0.15s ease"
           >
-            New Role
+            New Project
           </Button>
         )}
       </Flex>
 
       {/* ── Stats Row ── */}
-      <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={5} mb={8}>
+      <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={5} mb={8}>
         <MotionBox initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}>
-          <StatCard label="Active Roles" value={roles.length} sub={`${completedRoles} completed`}
+          <StatCard label="Active Projects" value={roles.length}
             icon={MdWork} colorScheme="brand" isLoading={isLoading} />
         </MotionBox>
         <MotionBox initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
@@ -157,10 +149,6 @@ const DashboardPage: React.FC = () => {
             icon={MdCreditCard}
             colorScheme={credits > 5 ? 'green' : credits > 0 ? 'orange' : 'red'}
             isLoading={isLoading} />
-        </MotionBox>
-        <MotionBox initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
-          <StatCard label="HM Pending" value={pendingHM} sub="Awaiting completion"
-            icon={MdPendingActions} colorScheme="orange" isLoading={isLoading} />
         </MotionBox>
       </SimpleGrid>
 
@@ -193,15 +181,14 @@ const DashboardPage: React.FC = () => {
       <Box bg="white" borderRadius="2xl" boxShadow="card" border="1px solid" borderColor="slate.100" overflow="hidden">
         <Flex px={6} py={4} justify="space-between" align="center" borderBottom="1px solid" borderColor="slate.50">
           <VStack align="start" spacing={0}>
-            <Text fontSize="sm" fontWeight="700" color="slate.900">Recent Hiring Roles</Text>
-            <Text fontSize="xs" color="slate.400">Gatekeeper status overview</Text>
+            <Text fontSize="sm" fontWeight="700" color="slate.900">Recent Projects</Text>
           </VStack>
           <Button
             size="sm"
             variant="ghost"
             color="brand.700"
             rightIcon={<ArrowForwardIcon />}
-            onClick={() => navigate('/roles')}
+            onClick={() => navigate('/projects')}
             _hover={{ bg: 'brand.50', color: 'brand.800' }}
             fontWeight="600"
           >
@@ -213,10 +200,8 @@ const DashboardPage: React.FC = () => {
           <Table variant="simple" size="sm">
             <Thead bg="slate.50">
               <Tr>
-                <Th py={3}>Role</Th>
-                <Th>HM Status</Th>
+                <Th py={3}>Project</Th>
                 <Th>Candidates</Th>
-                <Th>Gate</Th>
                 <Th>Created</Th>
               </Tr>
             </Thead>
@@ -224,28 +209,26 @@ const DashboardPage: React.FC = () => {
               {isLoading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <Tr key={i}>
-                    {Array.from({ length: 5 }).map((_, j) => (
+                    {Array.from({ length: 3 }).map((_, j) => (
                       <Td key={j}><Skeleton h="16px" borderRadius="md" /></Td>
                     ))}
                   </Tr>
                 ))
               ) : roles.length === 0 ? (
                 <Tr>
-                  <Td colSpan={5} textAlign="center" py={12} color="slate.400">
+                  <Td colSpan={3} textAlign="center" py={12} color="slate.400">
                     <VStack spacing={2}>
                       <Icon as={MdWork} boxSize={8} color="slate.200" />
-                      <Text fontSize="sm">No roles created yet</Text>
+                      <Text fontSize="sm">No projects created yet</Text>
                     </VStack>
                   </Td>
                 </Tr>
-              ) : roles.slice(0, 6).map((role) => {
-                const sc = statusConfig[role.hiringManagerStatus] ?? statusConfig['IDLE'];
-                return (
+              ) : roles.slice(0, 6).map((role) => (
                   <Tr
                     key={role.id}
                     _hover={{ bg: 'slate.50' }}
                     cursor="pointer"
-                    onClick={() => navigate('/roles')}
+                    onClick={() => navigate(`/projects/${role.id}`)}
                     transition="background 0.15s"
                   >
                     <Td>
@@ -255,39 +238,9 @@ const DashboardPage: React.FC = () => {
                       </VStack>
                     </Td>
                     <Td>
-                      <Badge
-                        colorScheme={sc.colorScheme}
-                        borderRadius="full"
-                        fontSize="xs"
-                        fontWeight="700"
-                        px={2.5}
-                        py={0.5}
-                      >
-                        {sc.label}
-                      </Badge>
-                    </Td>
-                    <Td>
                       <Text fontSize="sm" fontWeight="600" color="slate.700">
                         {role.candidates?.length ?? 0}
                       </Text>
-                    </Td>
-                    <Td>
-                      <Tooltip
-                        label={
-                          role.hiringManagerStatus === 'COMPLETED'
-                            ? 'Candidate invites unlocked'
-                            : 'Locked — awaiting HM assessment'
-                        }
-                        hasArrow
-                      >
-                        <Box display="inline-flex" alignItems="center">
-                          <Icon
-                            as={role.hiringManagerStatus === 'COMPLETED' ? UnlockIcon : LockIcon}
-                            color={role.hiringManagerStatus === 'COMPLETED' ? 'green.500' : 'slate.300'}
-                            boxSize={4}
-                          />
-                        </Box>
-                      </Tooltip>
                     </Td>
                     <Td>
                       <Text fontSize="xs" color="slate.400">
@@ -295,8 +248,7 @@ const DashboardPage: React.FC = () => {
                       </Text>
                     </Td>
                   </Tr>
-                );
-              })}
+              ))}
             </Tbody>
           </Table>
         </TableContainer>

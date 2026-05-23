@@ -108,7 +108,7 @@ const BillingPage: React.FC = () => {
               <Text fontSize="3xl" fontWeight="800" color="slate.900" letterSpacing="-0.04em">
                 {currentPlan ? PLANS[currentPlan].maxUsers : '—'}
               </Text>
-              <Text fontSize="xs" color="slate.400" mt={1}>Unlimited hiring managers</Text>
+              <Text fontSize="xs" color="slate.400" mt={1}>Unlimited project managers</Text>
             </Box>
           </>
         )}

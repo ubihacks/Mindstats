@@ -229,7 +229,7 @@ const NotFoundPage: React.FC = () => {
           </Text>
           <HStack spacing={0} justify="center" flexWrap="wrap">
             {[
-              { label: 'Roles',    path: '/roles'    },
+              { label: 'Projects', path: '/projects' },
               { label: 'Reports',  path: '/reports'  },
               { label: 'Billing',  path: '/billing'  },
             ].map((link, i) => (

@@ -165,7 +165,7 @@ const RegisterPage: React.FC = () => {
           <VStack align="start" spacing={3}>
             {[
               { title: 'Company workspace', desc: 'All users under your domain, one shared credit pool' },
-              { title: 'Role-based access', desc: 'Admin, HR, and Hiring Manager roles built-in' },
+              { title: 'Role-based access', desc: 'Admin, HR, and Project Manager roles built-in' },
               { title: 'DISC assessments', desc: '28-question validated behavioural profiling' },
             ].map(({ title, desc }) => (
               <HStack key={title} spacing={3} align="flex-start">

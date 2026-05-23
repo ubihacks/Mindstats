@@ -118,7 +118,7 @@ const ReportUploadModal: React.FC<Props> = ({ isOpen, onClose, roles }) => {
               {selectedRole && (
                 <FormControl>
                   <FormLabel fontWeight="600" fontSize="sm">Candidate (optional — leave empty for HM report)</FormLabel>
-                  <Select {...register('candidateId')} placeholder="Hiring Manager Report"
+                  <Select {...register('candidateId')} placeholder="Project Manager Report"
                     _focus={{ borderColor: 'blue.500' }}>
                     {selectedRole.candidates.map((c) => (
                       <option key={c.id} value={c.id}>{c.name} — {c.email}</option>
