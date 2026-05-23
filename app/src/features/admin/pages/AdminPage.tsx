@@ -31,7 +31,7 @@ const AdminPage: React.FC = () => {
   const [users, setUsers] = useState<CompanyUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<UserRole>('HR');
+  const [inviteRole, setInviteRole] = useState<UserRole>('MEMBER');
   const [isInviting, setIsInviting] = useState(false);
 
   useEffect(() => {
@@ -103,6 +103,9 @@ const AdminPage: React.FC = () => {
   const roleConfig: Record<UserRole, { scheme: string; label: string }> = {
     SUPER_ADMIN:    { scheme: 'red',    label: 'Super Admin' },
     ADMIN:          { scheme: 'purple', label: 'Admin' },
+    MEMBER:         { scheme: 'blue',   label: 'Member' },
+    HR:             { scheme: 'teal',   label: 'HR' },          // legacy
+    HIRING_MANAGER: { scheme: 'green',  label: 'Hiring Mgr' },  // legacy
     HR:             { scheme: 'blue',   label: 'HR' },
     HIRING_MANAGER: { scheme: 'green',  label: 'Hiring Mgr' },
   };
@@ -318,9 +321,8 @@ const AdminPage: React.FC = () => {
                   border="1.5px solid"
                   borderColor="slate.200"
                 >
-                  <option value="HR">HR</option>
-                  <option value="HIRING_MANAGER">Project Manager</option>
                   <option value="ADMIN">Admin</option>
+                  <option value="MEMBER">Member</option>
                 </Select>
               </FormControl>
             </VStack>

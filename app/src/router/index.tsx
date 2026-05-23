@@ -16,7 +16,6 @@ import RoleDetailPage from '../features/roles/pages/RoleDetailPage';
 import AssessmentPage from '../features/assessment/pages/AssessmentPage';
 import HMDemandPage from '../features/assessment/pages/HMDemandPage';
 import BillingPage from '../features/billing/pages/BillingPage';
-import ReportsPage from '../features/reports/pages/ReportsPage';
 import AdminPage from '../features/admin/pages/AdminPage';
 import InvitePage from '../pages/InvitePage';
 import AssessmentCompletePage from '../pages/AssessmentCompletePage';
@@ -70,7 +69,6 @@ const router = createBrowserRouter([
           { path: '/dashboard',    element: <DashboardPage />    },
           { path: '/projects',         element: <RolesPage />        },
           { path: '/projects/:roleId',  element: <RoleDetailPage />  },
-          { path: '/reports',   element: <ReportsPage />   },
           {
             element: <ProtectedRoute allowedRoles={['ADMIN']} />,
             children: [

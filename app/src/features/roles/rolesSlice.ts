@@ -183,13 +183,13 @@ export const inviteCandidate = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      // Gate: the company must have at least 1 credit available.
+      // The credit is NOT deducted now — it is deducted when the candidate
+      // actually completes the assessment.
       const company = await getCompany(payload.companyId);
       if (!company || company.credits < 1) {
         return rejectWithValue('Insufficient credits. Please purchase more credits.');
       }
-
-      const { error: creditError } = await deductCredit(company.domain, company.credits);
-      if (creditError) return rejectWithValue('Failed to deduct credit');
 
       const inviteToken = uuidv4();
       const expiresAt = addDays(new Date(), 14).toISOString();
@@ -209,14 +209,10 @@ export const inviteCandidate = createAsyncThunk(
         .select()
         .single();
 
-      if (error) {
-        // Refund credit on failure
-        await refundCredit(company.domain, company.credits);
-        return rejectWithValue(error.message);
-      }
+      if (error) return rejectWithValue(error.message);
 
       return { roleId: payload.roleId, candidate: data as Candidate, inviteToken };
-    } catch (err: unknown) {
+    } catch {
       return rejectWithValue('Failed to invite candidate');
     }
   }
@@ -237,14 +233,10 @@ export const deleteCandidate = createAsyncThunk(
 
       if (error) return rejectWithValue(error.message);
 
-      // Refund 1 credit back to the company pool
-      const company = await getCompany(payload.companyId);
-      if (company) {
-        await refundCredit(company.domain, company.credits);
-      }
+      // No credit refund — credits are only deducted on completion, not on invite.
 
       return { candidateId: payload.candidateId, roleId: payload.roleId };
-    } catch (err: unknown) {
+    } catch {
       return rejectWithValue('Failed to delete invite');
     }
   }
@@ -272,13 +264,7 @@ export const refundExpiredCredits = createAsyncThunk(
 
       if (updateError) return rejectWithValue(updateError.message);
 
-      const company = await getCompany(companyId);
-      if (company) {
-        await supabase
-          .from('companies')
-          .update({ credits: company.credits + expiredCandidates.length })
-          .eq('domain', company.domain);
-      }
+      // No credit refund — credits were never deducted for uninvited/expired links.
 
       return expiredCandidates.length;
     } catch (err: unknown) {

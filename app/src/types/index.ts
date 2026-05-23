@@ -1,6 +1,6 @@
 // ─── Domain Types ────────────────────────────────────────────────────────────
 
-export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'HR' | 'HIRING_MANAGER';
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'HR' | 'HIRING_MANAGER' | 'MEMBER';
 
 export type AssessmentStatus = 'IDLE' | 'IN_PROGRESS' | 'COMPLETED';
 
@@ -78,6 +78,41 @@ export interface HiringRole {
 }
 
 export interface DiscScores { D: number; I: number; S: number; C: number }
+
+// ─── DISC 3-Graph Scoring (calculate-disc Edge Function v2) ──────────────────
+
+/** Per-dimension result containing scores for all three graphs. */
+export interface DiscDimResult {
+  most:                number;  // raw "Most" count (0–28)
+  least:               number;  // raw "Least" count (0–28)
+  perceived:           number;  // most − least (−28 to +28)
+  public_intensity:    number;  // Graph 1 lookup result
+  public_percent:      number;  // public_intensity / 28  (0.0–1.0)
+  private_intensity:   number;  // Graph 2 lookup result
+  private_percent:     number;  // private_intensity / 28
+  perceived_intensity: number;  // Graph 3 lookup result
+  perceived_percent:   number;  // perceived_intensity / 28
+}
+
+/** Full result returned by the calculate-disc Edge Function. */
+export interface CalculateDiscResult {
+  respondent:        string;
+  email:             string;
+  scores:            Record<'D' | 'I' | 'S' | 'C', DiscDimResult>;
+  public_profile:    string;   // e.g. "CS"
+  public_label:      string;   // e.g. "THE PERFECTIONIST"
+  private_profile:   string;
+  private_label:     string;
+  perceived_profile: string;
+  perceived_label:   string;
+  alignment_type:    string;   // e.g. "Adaptation Gap"
+  stress_scale:      number;   // 0.05 – 0.95
+}
+
+export interface CalculateDiscResponse {
+  success: true;
+  result:  CalculateDiscResult;
+}
 
 export interface Candidate {
   id: string;

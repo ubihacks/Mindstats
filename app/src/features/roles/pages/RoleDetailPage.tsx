@@ -1,6 +1,6 @@
 
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box, Heading, Text, VStack, HStack, Flex, Badge, Button, Avatar,
   Table, Thead, Tbody, Tr, Th, Td, TableContainer, Tag, Icon,
@@ -9,9 +9,12 @@ import {
   AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader,
   AlertDialogContent, AlertDialogOverlay,
 } from '@chakra-ui/react';
+import { supabase } from '../../../lib/supabaseClient';
 import {
   ArrowBackIcon, CopyIcon, CheckIcon, AddIcon, DeleteIcon, RepeatIcon, DownloadIcon,
 } from '@chakra-ui/icons';
+import { MdPictureAsPdf } from 'react-icons/md';
+import { generateDiscReport } from '../../discReport/generateReport';
 import { MdWork, MdPeople, MdCheckCircle, MdPending, MdTimer } from 'react-icons/md';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
@@ -29,9 +32,6 @@ const STATUS_CONFIG: Record<string, { colorScheme: string; label: string; icon: 
 
 const DISC_COLOR: Record<string, string> = {
   D: '#E53E3E', I: '#D69E2E', S: '#38A169', C: '#3182CE',
-};
-const DISC_LABEL: Record<string, string> = {
-  D: 'Dominance', I: 'Influence', S: 'Steadiness', C: 'Conscientiousness',
 };
 
 /* ── Stat Card ── */
@@ -79,6 +79,13 @@ const CopyLink: React.FC<{ token: string }> = ({ token }) => {
 /* ══════════════════════════════════════════════════════════════════════════
    ROLE DETAIL PAGE
 ══════════════════════════════════════════════════════════════════════════ */
+interface DiscRow {
+  public_profile: string;
+  public_label:   string;
+  alignment_type: string;
+  stress_scale:   number;
+}
+
 const RoleDetailPage: React.FC = () => {
   const { roleId } = useParams<{ roleId: string }>();
   const navigate = useNavigate();
@@ -87,9 +94,11 @@ const RoleDetailPage: React.FC = () => {
   const { roles, status } = useAppSelector((s) => s.roles);
   const { user } = useAppSelector((s) => s.auth);
   const candidateModal = useDisclosure();
-  const [deletingId, setDeletingId]     = useState<string | null>(null);
+  const [deletingId, setDeletingId]       = useState<string | null>(null);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [pdfLoadingId, setPdfLoadingId]   = useState<string | null>(null);
   const [confirmCandidate, setConfirmCandidate] = useState<Candidate | null>(null);
+  const [discMap, setDiscMap]             = useState<Record<string, DiscRow>>({});
   const deleteDialog = useDisclosure();
   const cancelRef    = useRef<HTMLButtonElement>(null);
 
@@ -100,6 +109,50 @@ const RoleDetailPage: React.FC = () => {
 
   const role = roles.find((r) => r.id === roleId);
   const isLoading = status === 'loading' && !role;
+
+  // Fetch disc_results for every completed candidate whenever the role data changes
+  useEffect(() => {
+    if (!role) return;
+    const completedEmails = role.candidates
+      .filter((c) => c.inviteStatus === 'COMPLETED' && c.email)
+      .map((c) => c.email);
+    if (completedEmails.length === 0) return;
+
+    supabase
+      .from('disc_results')
+      .select('respondent_email, public_profile, public_label, alignment_type, stress_scale')
+      .in('respondent_email', completedEmails)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        if (!data) return;
+        // Keep only the most-recent result per email
+        const map: Record<string, DiscRow> = {};
+        for (const row of data) {
+          if (!map[row.respondent_email]) {
+            map[row.respondent_email] = {
+              public_profile: row.public_profile,
+              public_label:   row.public_label,
+              alignment_type: row.alignment_type,
+              stress_scale:   row.stress_scale,
+            };
+          }
+        }
+        setDiscMap(map);
+      });
+  }, [role]);
+
+  const handleDownloadPDF = async (c: Candidate) => {
+    if (!c.email) return;
+    setPdfLoadingId(c.id);
+    try {
+      await generateDiscReport(c.name, c.email);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to generate PDF';
+      toast({ title: 'PDF generation failed', description: msg, status: 'error', position: 'top', duration: 4000 });
+    } finally {
+      setPdfLoadingId(null);
+    }
+  };
 
   const handleDownloadResponses = async (c: Candidate) => {
     if (!role) return;
@@ -122,13 +175,14 @@ const RoleDetailPage: React.FC = () => {
 
       const { DISC_QUESTIONS } = await import('../../assessment/data/questions');
       const traitMap: Record<string, string> = { a: 'D (Dominance)', b: 'I (Influence)', c: 'S (Steadiness)', d: 'C (Conscientiousness)' };
-      const answers: any[] = typeof data.answers === 'string' ? JSON.parse(data.answers) : data.answers;
+      type RawAnswer = { questionId: number; mostOptionId?: string; leastOptionId?: string };
+      const answers: RawAnswer[] = typeof data.answers === 'string' ? JSON.parse(data.answers) : data.answers;
       const escape = (s = '') => `"${String(s).replace(/"/g, '""')}"`;
 
       const rows = [
         ['Q#', 'Topic', 'Most — Text', 'Most — Trait', 'Least — Text', 'Least — Trait'].join(','),
         [`Candidate: ${c.name}`, `Email: ${c.email}`, `Submitted: ${new Date(data.submitted_at).toLocaleString()}`, '', '', ''].join(','),
-        ...answers.map((ans: any) => {
+        ...answers.map((ans: RawAnswer) => {
           const q = DISC_QUESTIONS.find((q) => q.id === ans.questionId);
           if (!q) return '';
           const mostOpt  = q.options.find((o) => o.id === ans.mostOptionId);
@@ -267,7 +321,6 @@ const RoleDetailPage: React.FC = () => {
                         <Th fontSize="10px" color="gray.500" py={3}>Candidate</Th>
                         <Th fontSize="10px" color="gray.500">Assessment</Th>
                         <Th fontSize="10px" color="gray.500">DISC Profile</Th>
-                        <Th fontSize="10px" color="gray.500">Report</Th>
                         <Th fontSize="10px" color="gray.500">Expires</Th>
                         <Th fontSize="10px" color="gray.500">Invite Link</Th>
                         <Th w={10} />
@@ -301,45 +354,35 @@ const RoleDetailPage: React.FC = () => {
                               </Badge>
                             </Td>
 
-                            {/* DISC primary trait */}
+                            {/* DISC primary trait — sourced from disc_results */}
                             <Td>
-                              {c.discScores ? (() => {
-                                const primary = (Object.entries(c.discScores) as [string, number][]).sort((a, b) => b[1] - a[1])[0][0];
+                              {(() => {
+                                const dr = c.email ? discMap[c.email] : undefined;
+                                if (!dr) return <Text fontSize="xs" color="gray.300">—</Text>;
+                                const primary = dr.public_profile[0] as string;
                                 return (
-                                  <Tooltip label={DISC_LABEL[primary]} hasArrow>
+                                  <Tooltip label={`${dr.public_label} · ${dr.alignment_type}`} hasArrow>
                                     <HStack spacing={1.5} display="inline-flex">
                                       <Box
-                                        w="20px" h="20px" borderRadius="md" flexShrink={0}
-                                        bg={DISC_COLOR[primary]} color="white"
+                                        w="22px" h="22px" borderRadius="md" flexShrink={0}
+                                        bg={DISC_COLOR[primary] ?? 'gray.400'} color="white"
                                         display="flex" alignItems="center" justifyContent="center"
                                         fontSize="10px" fontWeight="800"
                                       >
-                                        {primary}
+                                        {dr.public_profile}
                                       </Box>
-                                      <Text fontSize="xs" fontWeight="600" color="gray.600">{DISC_LABEL[primary]}</Text>
+                                      <Box>
+                                        <Text fontSize="xs" fontWeight="700" color="gray.800" lineHeight="1.2">
+                                          {dr.public_label}
+                                        </Text>
+                                        <Text fontSize="9px" color="gray.400" lineHeight="1.2">
+                                          {dr.alignment_type}
+                                        </Text>
+                                      </Box>
                                     </HStack>
                                   </Tooltip>
                                 );
-                              })() : (
-                                <Text fontSize="xs" color="gray.300">—</Text>
-                              )}
-                            </Td>
-
-                            {/* Report status */}
-                            <Td>
-                              {c.inviteStatus === 'COMPLETED' ? (
-                                c.reportUrl ? (
-                                  <Badge colorScheme="green" borderRadius="full" px={2.5} fontSize="10px" fontWeight="700">
-                                    Uploaded
-                                  </Badge>
-                                ) : (
-                                  <Badge colorScheme="gray" borderRadius="full" px={2.5} fontSize="10px" fontWeight="700">
-                                    Pending Review
-                                  </Badge>
-                                )
-                              ) : (
-                                <Text fontSize="xs" color="gray.300">—</Text>
-                              )}
+                              })()}
                             </Td>
 
                             <Td>
@@ -356,16 +399,28 @@ const RoleDetailPage: React.FC = () => {
                             <Td>
                               <HStack spacing={1}>
                                 {c.inviteStatus === 'COMPLETED' && (
-                                  <Tooltip label="Download assessment responses (CSV)" hasArrow>
-                                    <IconButton
-                                      aria-label="Download responses"
-                                      icon={<DownloadIcon />}
-                                      size="xs" variant="ghost" color="blue.400"
-                                      isLoading={downloadingId === c.id}
-                                      _hover={{ bg: 'blue.50', color: 'blue.600' }}
-                                      onClick={() => handleDownloadResponses(c)}
-                                    />
-                                  </Tooltip>
+                                  <>
+                                    <Tooltip label="Download DISC PDF Report" hasArrow>
+                                      <IconButton
+                                        aria-label="Download PDF report"
+                                        icon={<Icon as={MdPictureAsPdf} />}
+                                        size="xs" variant="ghost" color="purple.500"
+                                        isLoading={pdfLoadingId === c.id}
+                                        _hover={{ bg: 'purple.50', color: 'purple.700' }}
+                                        onClick={() => handleDownloadPDF(c)}
+                                      />
+                                    </Tooltip>
+                                    <Tooltip label="Download assessment responses (CSV)" hasArrow>
+                                      <IconButton
+                                        aria-label="Download responses"
+                                        icon={<DownloadIcon />}
+                                        size="xs" variant="ghost" color="blue.400"
+                                        isLoading={downloadingId === c.id}
+                                        _hover={{ bg: 'blue.50', color: 'blue.600' }}
+                                        onClick={() => handleDownloadResponses(c)}
+                                      />
+                                    </Tooltip>
+                                  </>
                                 )}
                                 {c.inviteStatus === 'PENDING' && !isExpired && (
                                   <Tooltip label="Delete invite" hasArrow>

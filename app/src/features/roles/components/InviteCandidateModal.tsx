@@ -142,7 +142,7 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
                 <Alert status="info" borderRadius="lg" py={2}>
                   <AlertIcon />
                   <Text fontSize="xs">
-                    Deducts <strong>1 credit</strong> now. Credit refunded if unused after 14 days.
+                    1 credit is deducted only when the candidate <strong>completes</strong> the assessment.
                     Balance: <strong>{credits}</strong>
                   </Text>
                 </Alert>

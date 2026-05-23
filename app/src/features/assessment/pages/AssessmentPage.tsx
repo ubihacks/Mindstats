@@ -57,26 +57,15 @@ const AssessmentPage: React.FC = () => {
 
   useEffect(() => {
     if (submittedAt) {
-      // Compute DISC scores before resetting (a=D, b=I, c=S, d=C)
-      const disc = { D: 0, I: 0, S: 0, C: 0 };
-      const traitMap: Record<string, keyof typeof disc> = { a: 'D', b: 'I', c: 'S', d: 'C' };
-      Object.values(answers).forEach((a) => {
-        if (a.mostOptionId) {
-          const t = traitMap[a.mostOptionId.slice(-1)];
-          if (t) disc[t] += 2;
-        }
-        if (a.leastOptionId) {
-          const t = traitMap[a.leastOptionId.slice(-1)];
-          if (t) disc[t] -= 1;
-        }
-      });
+      // Scoring is authoritative server-side (calculate-disc Edge Function).
+      // Pass the raw answers for the CSV download on the complete page.
+      const snapshot = Object.values(answers);
       dispatch(resetAssessment());
       navigate('/assessment/complete', {
         state: {
           assessmentType: type,
-          disc,
-          totalAnswered: Object.keys(answers).length,
-          answers: Object.values(answers),
+          totalAnswered: snapshot.length,
+          answers: snapshot,
         },
       });
     }
@@ -84,13 +73,25 @@ const AssessmentPage: React.FC = () => {
 
   const handleSubmit = () => {
     if (!allComplete || !roleId) return;
+
+    const isHM       = type === 'hiring-manager';
     const inviteToken = sessionStorage.getItem('candidate_invite_token') ?? undefined;
-    // Candidates use invite token; HMs use their auth user id
-    const respondentId = type === 'hiring-manager' ? (user?.id ?? '') : (inviteToken ?? user?.id ?? '');
+
+    // For hiring managers use the authenticated user's identity.
+    // For candidates use the name/email saved to sessionStorage by InvitePage.
+    const respondentName = isHM
+      ? (user?.email?.split('@')[0] ?? user?.email ?? 'Hiring Manager')
+      : (sessionStorage.getItem('candidate_name')  ?? 'Candidate');
+    const respondentEmail = isHM
+      ? (user?.email ?? '')
+      : (sessionStorage.getItem('candidate_email') ?? '');
+
     dispatch(submitAssessment({
       roleId,
-      assessmentType: type === 'hiring-manager' ? 'HIRING_MANAGER' : 'CANDIDATE',
-      respondentId,
+      assessmentType:  isHM ? 'HIRING_MANAGER' : 'CANDIDATE',
+      respondentId:    user?.id ?? '',
+      respondentName,
+      respondentEmail,
       inviteToken,
     }));
   };

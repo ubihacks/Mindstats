@@ -46,16 +46,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             px={5} py={4}
             borderRadius="xl"
             border="1px solid"
-            borderColor={isMost ? NAVY : '#DADADA'}
-            bg={isMost ? '#EEF3FF' : 'white'}
+            borderColor={isMost || isLeast ? NAVY : '#DADADA'}
+            bg="white"
             transition="all 0.15s ease-out"
             _hover={{ borderColor: NAVY, bg: MINT }}
             role="group"
           >
             <Text
               fontSize={{ base: 'md', md: 'lg' }}
-              color={isMost ? NAVY : 'gray.700'}
-              fontWeight={isMost ? '600' : '400'}
+              color={isMost || isLeast ? NAVY : 'gray.700'}
+              fontWeight={isMost || isLeast ? '600' : '400'}
               lineHeight="1.6"
               flex={1}
             >
