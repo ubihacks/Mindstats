@@ -4,7 +4,7 @@ import {
   ModalFooter, ModalCloseButton, Button, FormControl, FormLabel,
   FormErrorMessage, Input, VStack, Text, Switch, HStack,
   Alert, AlertIcon, useToast, Box, InputGroup, InputRightElement,
-  IconButton,
+  IconButton, Select,
 } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
@@ -12,12 +12,21 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { inviteCandidate } from '../rolesSlice';
+import { deductOneCredit } from '../../billing/billingSlice';
 import type { HiringRole } from '../../../types';
 
+const JOB_LEVELS = [
+  'Fresh Grad (Internship)',
+  'Entry Level (Office & Admin.)',
+  'Junior Level (Executive)',
+  'Mid Level (Managerial)',
+  'Senior Level (Leadership)',
+] as const;
 
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Invalid email address'),
+  jobLevel: z.string().min(1, 'Job level is required'),
   shareReport: z.boolean(),
 });
 
@@ -41,7 +50,7 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { shareReport: true },
+    defaultValues: { shareReport: true, jobLevel: '' },
   });
 
   const shareReport = watch('shareReport');
@@ -73,8 +82,9 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
     );
     if (inviteCandidate.fulfilled.match(result)) {
       const token = (result.payload as { inviteToken: string }).inviteToken;
-      const link = `${window.location.origin}/invite/${token}`;
+      const link = `${window.location.origin}/invite/${token}?tier=${encodeURIComponent(data.jobLevel)}`;
       setInviteLink(link);
+      dispatch(deductOneCredit());
       reset();
     } else {
       toast({
@@ -142,7 +152,7 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
                 <Alert status="info" borderRadius="lg" py={2}>
                   <AlertIcon />
                   <Text fontSize="xs">
-                    1 credit is deducted only when the candidate <strong>completes</strong> the assessment.
+                    1 credit is deducted when the invitation is sent.
                     Balance: <strong>{credits}</strong>
                   </Text>
                 </Alert>
@@ -150,6 +160,17 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
                 <Text fontSize="sm" color="slate.600" bg="slate.50" borderRadius="lg" p={3} w="full">
                   Role: <strong>{role.title}</strong> · {role.jobLevel}
                 </Text>
+
+                <FormControl isInvalid={!!errors.jobLevel}>
+                  <FormLabel fontWeight="600" fontSize="sm">Job Level</FormLabel>
+                  <Select {...register('jobLevel')} placeholder="Select job level"
+                    _focus={{ borderColor: 'blue.500' }}>
+                    {JOB_LEVELS.map((lvl) => (
+                      <option key={lvl} value={lvl}>{lvl}</option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>{errors.jobLevel?.message}</FormErrorMessage>
+                </FormControl>
 
                 <FormControl isInvalid={!!errors.name}>
                   <FormLabel fontWeight="600" fontSize="sm">Candidate Name</FormLabel>
@@ -189,11 +210,11 @@ const InviteCandidateModal: React.FC<Props> = ({ isOpen, onClose, role }) => {
                 isLoading={status === 'loading'}
                 loadingText="Sending…"
                 fontWeight="700"
-                isDisabled={credits < 1}
-                _hover={{ bg: 'brand.700' }}
-                _disabled={{ opacity: 0.5 }}
-              >
-                Send Invite (−1 Credit)
+              isDisabled={credits < 1}
+              _hover={{ bg: 'brand.700' }}
+              _disabled={{ opacity: 0.5 }}
+            >
+              Send Invite (−1 Credit)
               </Button>
             </ModalFooter>
           </form>

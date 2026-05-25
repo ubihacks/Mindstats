@@ -125,7 +125,7 @@ const DashboardPage: React.FC = () => {
           <Button
             leftIcon={<AddIcon boxSize={3} />}
             colorScheme="brand"
-            onClick={() => navigate('/projects')}
+            onClick={() => navigate('/projects', { state: { openModal: true } })}
             _active={{ transform: 'translateY(0)' }}
             transition="all 0.15s ease"
           >

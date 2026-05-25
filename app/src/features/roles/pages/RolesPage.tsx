@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Button, Heading, HStack, VStack, Text, Flex,
   SimpleGrid, Skeleton, Tooltip, Icon, useDisclosure, Divider,
-  Alert, AlertIcon, Tag,
+  Alert, AlertIcon, Tag, Badge,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { MdWork, MdPeople, MdCheckCircle } from 'react-icons/md';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { fetchRoles } from '../rolesSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import CreateRoleModal from '../components/CreateRoleModal';
 import type { HiringRole } from '../../../types';
@@ -17,9 +17,22 @@ import InviteCandidateModal from '../components/InviteCandidateModal';
 
 const MotionBox = motion(Box);
 
+/** Compute project health from candidate completion ratio. */
+function getHealth(role: HiringRole): { label: string; colorScheme: string } {
+  const total     = role.candidates.length;
+  if (total === 0) return { label: 'No Candidates', colorScheme: 'gray' };
+  const completed = role.candidates.filter((c) => c.inviteStatus === 'COMPLETED').length;
+  const ratio     = completed / total;
+  if (ratio >= 0.8) return { label: 'Healthy',     colorScheme: 'green'  };
+  if (ratio >= 0.5) return { label: 'In Progress',  colorScheme: 'yellow' };
+  if (ratio >= 0.1) return { label: 'At Risk',      colorScheme: 'orange' };
+  return                     { label: 'Awaiting',   colorScheme: 'red'    };
+}
+
 const RolesPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAppSelector((s) => s.auth);
   const { roles, status } = useAppSelector((s) => s.roles);
   const { credits } = useAppSelector((s) => s.billing);
@@ -33,6 +46,15 @@ const RolesPage: React.FC = () => {
     // DataBootstrap handles initial load — only re-fetch if empty
     if (user?.id && roles.length === 0) dispatch(fetchRoles(user.id));
   }, [user]);
+
+  // Auto-open create modal when navigated here from Dashboard's "New Project" button
+  useEffect(() => {
+    if ((location.state as { openModal?: boolean })?.openModal) {
+      createModal.onOpen();
+      // Clear state so refresh doesn't re-trigger the modal
+      navigate('.', { replace: true, state: {} });
+    }
+  }, []);
 
   const handleOpenCandidateModal = (role: HiringRole) => {
     setActiveRole(role);
@@ -168,6 +190,26 @@ const RolesPage: React.FC = () => {
                         {role.title}
                       </Heading>
                     </Box>
+                    {/* Dynamic health indicator */}
+                    {(() => {
+                      const health = getHealth(role);
+                      return (
+                        <Tooltip label={`Project health: ${health.label}`} hasArrow>
+                          <Badge
+                            colorScheme={health.colorScheme}
+                            borderRadius="full"
+                            px={2.5} py={0.5}
+                            fontSize="10px"
+                            fontWeight="700"
+                            textTransform="uppercase"
+                            letterSpacing="0.04em"
+                            flexShrink={0}
+                          >
+                            {health.label}
+                          </Badge>
+                        </Tooltip>
+                      );
+                    })()}
                   </Flex>
 
                   {/* Tags */}

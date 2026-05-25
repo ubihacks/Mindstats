@@ -137,6 +137,11 @@ const billingSlice = createSlice({
     setPaymentCycle(state, action: PayloadAction<PaymentCycle>) {
       state.paymentCycle = action.payload;
     },
+    /** Optimistically deduct 1 credit when a candidate invitation is sent. */
+    deductOneCredit(state) {
+      state.credits = Math.max(0, state.credits - 1);
+      state.usedCredits += 1;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -169,5 +174,5 @@ const billingSlice = createSlice({
   },
 });
 
-export const { setPaymentCycle } = billingSlice.actions;
+export const { setPaymentCycle, deductOneCredit } = billingSlice.actions;
 export default billingSlice.reducer;

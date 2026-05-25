@@ -1,13 +1,17 @@
 ﻿/**
  * QuestionCard — Light Professional (Desing.md)
- * Row: white · hover: mint · Most selected: navy fill · Least: navy outline
+ * Row: white · hover: mint · Most selected: navy fill · Least: purple fill
+ * Both Most and Least rows highlight independently with their own accent colors.
  */
 import React from 'react';
 import { Box, Button, Flex, HStack, Text, Heading } from '@chakra-ui/react';
 import type { Question, QuestionAnswer } from '../../../types';
 
-const NAVY = '#003366';
-const MINT = '#E8F3ED';
+const NAVY         = '#003366';
+const MINT         = '#E8F3ED';
+const PURPLE       = '#553C9A';  // Chakra purple.700
+const PURPLE_BG    = '#FAF5FF';  // Chakra purple.50
+const NAVY_BG      = '#EBF0F8';  // Navy tinted bg for Most row
 
 interface QuestionCardProps {
   question:      Question;
@@ -45,16 +49,16 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             gap={4}
             px={5} py={4}
             borderRadius="xl"
-            border="1px solid"
-            borderColor={isMost || isLeast ? NAVY : '#DADADA'}
-            bg="white"
+            border="1.5px solid"
+            borderColor={isMost ? NAVY : isLeast ? PURPLE : '#DADADA'}
+            bg={isMost ? NAVY_BG : isLeast ? PURPLE_BG : 'white'}
             transition="all 0.15s ease-out"
-            _hover={{ borderColor: NAVY, bg: MINT }}
+            _hover={{ borderColor: isMost ? NAVY : isLeast ? PURPLE : NAVY, bg: isMost ? NAVY_BG : isLeast ? PURPLE_BG : MINT }}
             role="group"
           >
             <Text
               fontSize={{ base: 'md', md: 'lg' }}
-              color={isMost || isLeast ? NAVY : 'gray.700'}
+              color={isMost ? NAVY : isLeast ? PURPLE : 'gray.700'}
               fontWeight={isMost || isLeast ? '600' : '400'}
               lineHeight="1.6"
               flex={1}
@@ -84,7 +88,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 Most
               </Button>
 
-              {/* Least — same style as Most */}
+              {/* Least — purple filled when selected */}
               <Button
                 size="sm"
                 borderRadius="full"
@@ -95,10 +99,10 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 letterSpacing="0.04em"
                 border="1px solid"
                 onClick={() => onLeastSelect(option.id)}
-                bg={isLeast ? NAVY : 'transparent'}
+                bg={isLeast ? PURPLE : 'transparent'}
                 color={isLeast ? 'white' : 'gray.500'}
-                borderColor={isLeast ? NAVY : '#DADADA'}
-                _hover={{ bg: isLeast ? '#002952' : MINT, borderColor: NAVY, color: isLeast ? 'white' : NAVY }}
+                borderColor={isLeast ? PURPLE : '#DADADA'}
+                _hover={{ bg: isLeast ? '#44337A' : PURPLE_BG, borderColor: PURPLE, color: isLeast ? 'white' : PURPLE }}
                 _active={{ transform: 'scale(0.96)' }}
                 transition="all 0.15s ease-out"
               >

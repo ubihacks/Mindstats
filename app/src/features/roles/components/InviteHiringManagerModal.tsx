@@ -35,7 +35,6 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
   const toast = useToast();
   const { user } = useAppSelector((s) => s.auth);
   const { status } = useAppSelector((s) => s.roles);
-  const { credits } = useAppSelector((s) => s.billing);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -97,7 +96,7 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
                 <Alert status="success" borderRadius="xl" fontSize="sm">
                   <AlertIcon />
                   <Text fontSize="xs">
-                    Project manager invited for <strong>{role.title}</strong>. 1 credit deducted. Share the link below:
+                    Project manager invited for <strong>{role.title}</strong>. An email has been sent. Share the link below:
                   </Text>
                 </Alert>
                 <Box w="full">
@@ -147,7 +146,7 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
                 <Alert status="info" borderRadius="xl" py={3}>
                   <AlertIcon />
                   <Text fontSize="xs">
-                    Deducts <strong>1 credit</strong>. Balance: <strong>{credits}</strong>
+                    The project manager will receive an email with their assessment link. No credits are deducted.
                   </Text>
                 </Alert>
                 <Text fontSize="sm" color="slate.600" bg="slate.50" borderRadius="lg" p={3} w="full">
@@ -174,11 +173,9 @@ const InviteHiringManagerModal: React.FC<Props> = ({ isOpen, onClose, role }) =>
                 isLoading={status === 'loading'}
                 loadingText="Sending…"
                 fontWeight="700"
-                isDisabled={credits < 1}
                 _hover={{ bg: 'brand.700' }}
-                _disabled={{ opacity: 0.5 }}
               >
-                Send Invite (−1 Credit)
+                Send Invite
               </Button>
             </ModalFooter>
           </form>

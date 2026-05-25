@@ -100,14 +100,12 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const roleConfig: Record<UserRole, { scheme: string; label: string }> = {
+  const roleConfig: Record<string, { scheme: string; label: string }> = {
     SUPER_ADMIN:    { scheme: 'red',    label: 'Super Admin' },
     ADMIN:          { scheme: 'purple', label: 'Admin' },
-    MEMBER:         { scheme: 'blue',   label: 'Member' },
-    HR:             { scheme: 'teal',   label: 'HR' },          // legacy
-    HIRING_MANAGER: { scheme: 'green',  label: 'Hiring Mgr' },  // legacy
-    HR:             { scheme: 'blue',   label: 'HR' },
+    HR:             { scheme: 'teal',   label: 'HR' },
     HIRING_MANAGER: { scheme: 'green',  label: 'Hiring Mgr' },
+    MEMBER:         { scheme: 'blue',   label: 'Member' },
   };
 
   const adminCount = users.filter((u) => u.role === 'ADMIN').length;
@@ -322,7 +320,7 @@ const AdminPage: React.FC = () => {
                   borderColor="slate.200"
                 >
                   <option value="ADMIN">Admin</option>
-                  <option value="MEMBER">Member</option>
+                  <option value="HR">HR</option>
                 </Select>
               </FormControl>
             </VStack>

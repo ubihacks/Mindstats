@@ -142,15 +142,7 @@ export const inviteHiringManager = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // Deduct 1 credit for the invitation
-      const company = await getCompany(payload.companyId);
-      if (!company || company.credits < 1) {
-        return rejectWithValue('Insufficient credits. Please purchase more credits.');
-      }
-
-      const { error: creditError } = await deductCredit(company.domain, company.credits);
-      if (creditError) return rejectWithValue('Failed to deduct credit');
-
+      // Inviting a project manager does NOT deduct a credit.
       const { data, error } = await supabase
         .from('hiring_roles')
         .update({
@@ -184,12 +176,14 @@ export const inviteCandidate = createAsyncThunk(
   ) => {
     try {
       // Gate: the company must have at least 1 credit available.
-      // The credit is NOT deducted now — it is deducted when the candidate
-      // actually completes the assessment.
+      // The credit IS deducted immediately when an invitation is sent.
       const company = await getCompany(payload.companyId);
       if (!company || company.credits < 1) {
         return rejectWithValue('Insufficient credits. Please purchase more credits.');
       }
+
+      const { error: deductErr } = await deductCredit(company.domain, company.credits);
+      if (deductErr) return rejectWithValue('Failed to deduct credit');
 
       const inviteToken = uuidv4();
       const expiresAt = addDays(new Date(), 14).toISOString();
